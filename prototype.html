@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CarGA — Prototipo Interactivo</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚛</text></svg>">
+
+  <style>
+    /* ============================================
+       RESET & BASE
+       ============================================ */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --navy: #1A3C5E;
+      --navy-dark: #142F4A;
+      --blue: #2563A8;
+      --gold: #C9922A;
+      --gold-dark: #A87820;
+      --green: #16A34A;
+      --green-whatsapp: #25D366;
+      --green-whatsapp-dark: #128C7E;
+      --gray-bg: #F5F7FA;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-300: #D1D5DB;
+      --gray-400: #9CA3AF;
+      --gray-500: #6B7280;
+      --gray-600: #4B5563;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --white: #FFFFFF;
+      --red: #EF4444;
+    }
+
+    html, body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #E5E7EB;
+      color: var(--gray-800);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ============================================
+       INVESTOR DEMO BANNER
+       ============================================ */
+    .demo-banner {
+      background: var(--navy);
+      color: var(--white);
+      text-align: center;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .demo-banner span {
+      opacity: 0.6;
+    }
+
+    .demo-banner .screen-indicator {
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    /* ============================================
+       PHONE FRAME
+       ============================================ */
+    .phone-container {
+      display: flex;
+      justify-content: center;
+      padding: 32px 0 64px;
+    }
+
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      background: #000;
+      border-radius: 44px;
+      padding: 12px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: var(--white);
+      border-radius: 34px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Status bar */
+    .status-bar {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font-size: 14px;
+      font-weight: 600;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: transparent;
+    }
+
+    .status-bar.dark {
+      color: var(--white);
+    }
+
+    .status-bar.light {
+      color: var(--gray-800);
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    /* ============================================
+       SCREEN SYSTEM
+       ============================================ */
+    .screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      transition: transform 0.25s ease;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    .screen.slide-in-right {
+      animation: slideInRight 0.25s ease forwards;
+    }
+
+    .screen.slide-in-left {
+      animation: slideInLeft 0.25s ease forwards;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+
+    @keyframes slideInLeft {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(0); }
+    }
+
+    /* ============================================
+       SCREEN 1: SPLASH / ONBOARDING
+       ============================================ */
+    .screen-splash {
+      background: var(--navy);
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 32px;
+    }
+
+    .splash-logo {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    .splash-title {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .splash-tagline {
+      font-size: 16px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 60px;
+      line-height: 1.6;
+    }
+
+    .splash-btn {
+      width: 100%;
+      max-width: 280px;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 2px solid transparent;
+      font-family: inherit;
+      margin-bottom: 12px;
+      transition: transform 0.15s ease;
+    }
+
+    .splash-btn:hover { transform: scale(1.02); }
+
+    .splash-btn-primary {
+      background: var(--gold);
+      color: var(--white);
+      border-color: var(--gold);
+    }
+
+    .splash-btn-secondary {
+      background: transparent;
+      color: var(--white);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    /* ============================================
+       SCREEN 2: LOGIN
+       ============================================ */
+    .screen-login {
+      background: var(--white);
+      padding: 44px 0 0;
+    }
+
+    .login-content {
+      padding: 40px 24px;
+      flex: 1;
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .login-logo-icon {
+      font-size: 40px;
+    }
+
+    .login-logo-text {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .login-heading {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .login-sub {
+      font-size: 14px;
+      color: var(--gray-500);
+      margin-bottom: 32px;
+    }
+
+    .login-field {
+      margin-bottom: 16px;
+    }
+
+    .login-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--gray-800);
+      background: var(--gray-bg);
+      outline: none;
+    }
+
+    .login-input:focus {
+      border-color: var(--navy);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 8px;
+      transition: transform 0.15s ease;
+    }
+
+    .login-btn:hover { transform: scale(1.02); }
+
+    .login-register {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 14px;
+      color: var(--gray-500);
+    }
+
+    .login-register a {
+      color: var(--blue);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* ============================================
+       SCREEN 3: HOME / LOAD BOARD
+       ============================================ */
+    .screen-home {
+      background: var(--gray-bg);
+      padding-top: 44px;
+      padding-bottom: 72px;
+    }
+
+    /* Top bar */
+    .home-topbar {
+      background: var(--white);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .topbar-location {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topbar-bell {
+      position: relative;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .topbar-bell-badge {
+      position: absolute;
+      top: -4px;
+      right: -6px;
+      background: var(--red);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 700;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .topbar-avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* Search bar */
+    .home-search {
+      padding: 12px 16px;
+      background: var(--white);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--gray-800);
+      background: var(--gray-bg);
+      outline: none;
+    }
+
+    /* Filter chips */
+    .home-filters {
+      padding: 8px 16px 12px;
+      background: var(--white);
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .filter-chip {
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      color: var(--gray-600);
+      font-family: inherit;
+      transition: all 0.15s ease;
+    }
+
+    .filter-chip.active {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    /* Load cards */
+    .home-section-title {
+      padding: 16px 16px 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-500);
+    }
+
+    .load-card {
+      background: var(--white);
+      margin: 0 16px 10px;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--gray-200);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+      position: relative;
+    }
+
+    .load-card:active { transform: scale(0.98); }
+
+    .load-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--gold);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 50px;
+      text-transform: uppercase;
+    }
+
+    .load-route {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 2px;
+    }
+
+    .load-distance {
+      font-size: 12px;
+      color: var(--gray-400);
+      margin-bottom: 10px;
+    }
+
+    .load-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .load-detail {
+      font-size: 13px;
+      color: var(--gray-600);
+    }
+
+    .load-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .load-price {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--green);
+    }
+
+    .load-time {
+      font-size: 12px;
+      color: var(--gray-400);
+    }
+
+    /* ============================================
+       BOTTOM NAVIGATION (shared)
+       ============================================ */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      background: var(--white);
+      border-top: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding-bottom: 8px;
+      z-index: 50;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--gray-400);
+      background: none;
+      border: none;
+      font-family: inherit;
+      padding: 4px 8px;
+    }
+
+    .nav-item.active {
+      color: var(--navy);
+    }
+
+    .nav-item-icon {
+      font-size: 22px;
+    }
+
+    /* ============================================
+       SCREEN 4: LOAD DETAIL
+       ============================================ */
+    .screen-detail {
+      background: var(--gray-bg);
+      padding-top: 44px;
+    }
+
+    .detail-header {
+      background: var(--white);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .detail-back {
+      font-size: 20px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--navy);
+      padding: 4px;
+    }
+
+    .detail-header-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .detail-route {
+      background: var(--white);
+      padding: 24px 16px;
+      text-align: center;
+    }
+
+    .detail-city {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .detail-arrow {
+      font-size: 24px;
+      color: var(--gray-300);
+      margin: 8px 0;
+    }
+
+    .detail-distance-badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 6px 16px;
+      background: var(--gray-bg);
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-600);
+    }
+
+    .detail-card {
+      background: var(--white);
+      margin: 10px 16px;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--gray-200);
+    }
+
+    .detail-card h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 14px;
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-row-label {
+      color: var(--gray-500);
+    }
+
+    .detail-row-value {
+      font-weight: 600;
+      color: var(--gray-800);
+      text-align: right;
+    }
+
+    .detail-shipper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .detail-shipper-avatar {
+      width: 44px;
+      height: 44px;
+      background: var(--blue);
+      color: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .detail-shipper-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .detail-shipper-meta {
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    .detail-verified {
+      font-size: 13px;
+      color: var(--green);
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .detail-price-section {
+      text-align: center;
+      padding: 20px 16px;
+    }
+
+    .detail-price {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--green);
+    }
+
+    .detail-price-note {
+      font-size: 13px;
+      color: var(--gray-400);
+      margin-top: 4px;
+    }
+
+    .detail-actions {
+      padding: 0 16px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .detail-btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: var(--gold);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.15s ease;
+    }
+
+    .detail-btn-primary:hover { transform: scale(1.02); }
+
+    .detail-btn-secondary {
+      width: 100%;
+      padding: 16px;
+      background: var(--white);
+      color: var(--navy);
+      border: 2px solid var(--navy);
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.15s ease;
+    }
+
+    .detail-btn-secondary:hover { transform: scale(1.02); }
+
+    /* ============================================
+       SCREEN 5: WHATSAPP CHAT
+       ============================================ */
+    .screen-chat {
+      background: #ECE5DD;
+      padding-top: 0;
+    }
+
+    .chat-header {
+      background: var(--green-whatsapp-dark);
+      padding: 44px 16px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--white);
+    }
+
+    .chat-back {
+      font-size: 20px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--white);
+      padding: 4px;
+    }
+
+    .chat-contact-avatar {
+      width: 36px;
+      height: 36px;
+      background: var(--gray-300);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .chat-contact-name {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .chat-contact-status {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+    }
+
+    .chat-system {
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-500);
+      background: rgba(255,255,255,0.6);
+      padding: 4px 12px;
+      border-radius: 8px;
+      align-self: center;
+      margin: 8px 0;
+    }
+
+    .chat-bubble {
+      max-width: 80%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+      position: relative;
+    }
+
+    .chat-bubble-left {
+      background: var(--white);
+      color: var(--gray-800);
+      align-self: flex-start;
+      border-top-left-radius: 0;
+    }
+
+    .chat-bubble-right {
+      background: #DCF8C6;
+      color: var(--gray-800);
+      align-self: flex-end;
+      border-top-right-radius: 0;
+    }
+
+    .chat-time {
+      font-size: 11px;
+      color: var(--gray-400);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .chat-input-bar {
+      background: var(--white);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 20px;
+      background: var(--gray-bg);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .chat-send {
+      width: 40px;
+      height: 40px;
+      background: var(--green-whatsapp);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    /* ============================================
+       SCREEN 6: MAP VIEW
+       ============================================ */
+    .screen-map {
+      background: #E8EAE3;
+      padding-top: 44px;
+      padding-bottom: 72px;
+    }
+
+    .map-header {
+      background: var(--white);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .map-header-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .map-filter-icon {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .map-area {
+      flex: 1;
+      position: relative;
+      background: #E8EAE3;
+      overflow: hidden;
+    }
+
+    /* Fake roads */
+    .map-road {
+      position: absolute;
+      background: rgba(255,255,255,0.7);
+    }
+
+    .map-road-h {
+      height: 3px;
+      width: 100%;
+    }
+
+    .map-road-v {
+      width: 3px;
+      height: 100%;
+    }
+
+    .map-road-d {
+      height: 3px;
+      transform-origin: left center;
+    }
+
+    /* Map pins */
+    .map-pin {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .map-pin-price {
+      background: var(--navy);
+      color: var(--white);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .map-pin-price.gold {
+      background: var(--gold);
+    }
+
+    .map-pin-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--navy);
+      border: 2px solid var(--white);
+      border-radius: 50%;
+      margin-top: -2px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .map-pin-dot.gold {
+      background: var(--gold);
+    }
+
+    /* Current location blue dot */
+    .map-current {
+      position: absolute;
+      z-index: 15;
+    }
+
+    .map-current-dot {
+      width: 14px;
+      height: 14px;
+      background: var(--blue);
+      border: 3px solid var(--white);
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px rgba(37, 99, 168, 0.2);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(37, 99, 168, 0.2); }
+      50% { box-shadow: 0 0 0 10px rgba(37, 99, 168, 0.1); }
+    }
+
+    /* City labels */
+    .map-city-label {
+      position: absolute;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray-600);
+      white-space: nowrap;
+      z-index: 5;
+    }
+
+    /* Map bottom sheet */
+    .map-sheet {
+      position: absolute;
+      bottom: 72px;
+      left: 0;
+      right: 0;
+      background: var(--white);
+      border-radius: 16px 16px 0 0;
+      padding: 16px;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+      display: none;
+      z-index: 20;
+    }
+
+    .map-sheet.visible {
+      display: block;
+    }
+
+    .map-sheet-route {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .map-sheet-meta {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin: 4px 0 12px;
+    }
+
+    .map-sheet-price {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+
+    .map-sheet-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* ============================================
+       SCREEN 7: PUBLISH LOAD
+       ============================================ */
+    .screen-publish {
+      background: var(--gray-bg);
+      padding-top: 44px;
+      padding-bottom: 72px;
+    }
+
+    .publish-header {
+      background: var(--white);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .publish-header-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .publish-form {
+      padding: 16px;
+    }
+
+    .publish-field {
+      margin-bottom: 14px;
+    }
+
+    .publish-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+    }
+
+    .publish-input,
+    .publish-select,
+    .publish-textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--gray-800);
+      background: var(--white);
+      outline: none;
+    }
+
+    .publish-textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .publish-input:focus,
+    .publish-select:focus,
+    .publish-textarea:focus {
+      border-color: var(--navy);
+    }
+
+    .publish-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .publish-row .publish-field {
+      flex: 1;
+    }
+
+    .publish-unit {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+
+    /* Toggle */
+    .publish-toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+    }
+
+    .publish-toggle-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .toggle {
+      width: 48px;
+      height: 28px;
+      background: var(--green);
+      border-radius: 14px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .toggle-dot {
+      width: 22px;
+      height: 22px;
+      background: var(--white);
+      border-radius: 50%;
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      transition: right 0.15s ease;
+    }
+
+    .publish-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--gold);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 16px;
+      transition: transform 0.15s ease;
+    }
+
+    .publish-btn:hover { transform: scale(1.02); }
+
+    /* Success modal */
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 24px;
+    }
+
+    .modal-overlay.visible {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .modal-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .modal-text {
+      font-size: 14px;
+      color: var(--gray-500);
+      margin-bottom: 24px;
+    }
+
+    .modal-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* ============================================
+       SCREEN 8: PROFILE
+       ============================================ */
+    .screen-profile {
+      background: var(--gray-bg);
+      padding-top: 44px;
+      padding-bottom: 72px;
+    }
+
+    .profile-header {
+      background: var(--white);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .profile-header-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .profile-card {
+      background: var(--white);
+      margin: 16px;
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid var(--gray-200);
+      text-align: center;
+    }
+
+    .profile-avatar {
+      width: 64px;
+      height: 64px;
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      margin: 0 auto 12px;
+    }
+
+    .profile-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .profile-verified {
+      font-size: 13px;
+      color: var(--green);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .profile-rating {
+      font-size: 14px;
+      color: var(--gray-500);
+    }
+
+    .profile-since {
+      font-size: 12px;
+      color: var(--gray-400);
+      margin-top: 4px;
+    }
+
+    /* Stats row */
+    .profile-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 0 16px 10px;
+    }
+
+    .profile-stat {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid var(--gray-200);
+    }
+
+    .profile-stat-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .profile-stat-label {
+      font-size: 11px;
+      color: var(--gray-500);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    /* Truck section */
+    .profile-section {
+      margin: 16px;
+    }
+
+    .profile-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+
+    .profile-truck-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 14px;
+      border: 1px solid var(--gray-200);
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: var(--gray-700);
+    }
+
+    .profile-add-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--gray-bg);
+      color: var(--navy);
+      border: 2px dashed var(--gray-300);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* Activity */
+    .profile-activity-item {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 12px 14px;
+      border: 1px solid var(--gray-200);
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: var(--gray-700);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .profile-activity-amount {
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    /* ============================================
+       TOAST
+       ============================================ */
+    .toast {
+      position: absolute;
+      bottom: 88px;
+      left: 16px;
+      right: 16px;
+      background: var(--gray-800);
+      color: var(--white);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;
+      z-index: 300;
+      display: none;
+      animation: toastIn 0.2s ease;
+    }
+
+    .toast.visible {
+      display: block;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================
+       RESPONSIVE: Full screen on small devices
+       ============================================ */
+    @media (max-width: 500px) {
+      .demo-banner { display: none; }
+
+      .phone-container {
+        padding: 0;
+      }
+
+      .phone-frame {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        padding: 0;
+        box-shadow: none;
+      }
+
+      .phone-screen {
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       INVESTOR DEMO BANNER
+       ========================================== -->
+  <div class="demo-banner" id="demo-banner">
+    🎯 Modo Demostración — CarGA MVP Prototype · <span class="screen-indicator" id="screen-indicator">Pantalla 1 de 8</span>
+  </div>
+
+  <!-- ==========================================
+       PHONE CONTAINER
+       ========================================== -->
+  <div class="phone-container">
+    <div class="phone-frame">
+      <div class="phone-screen" id="phone-screen">
+
+        <!-- Status Bar (repositioned per-screen via JS) -->
+
+        <!-- ==========================================
+             SCREEN 1: SPLASH / ONBOARDING
+             ========================================== -->
+        <div class="screen screen-splash active" id="screen-1" data-screen="1">
+          <div class="status-bar dark">
+            <span>9:41</span>
+            <div class="status-icons">
+              <span>📶</span>
+              <span>🔋</span>
+            </div>
+          </div>
+          <div class="splash-logo">🚛</div>
+          <div class="splash-title">CarGA</div>
+          <div class="splash-tagline">La bolsa de cargas digital<br>de Argentina</div>
+          <button class="splash-btn splash-btn-primary" onclick="navigateTo(2, 'right')">Soy Transportista</button>
+          <button class="splash-btn splash-btn-secondary" onclick="navigateTo(2, 'right')">Soy Cargador</button>
+        </div>
+
+        <!-- ==========================================
+             SCREEN 2: LOGIN
+             ========================================== -->
+        <div class="screen screen-login" id="screen-2" data-screen="2">
+          <div class="status-bar light">
+            <span>9:41</span>
+            <div class="status-icons">
+              <span>📶</span>
+              <span>🔋</span>
+            </div>
+          </div>
+          <div class="login-content">
+            <div class="login-logo">
+              <div class="login-logo-icon">🚛</div>
+              <div class="login-logo-text">CarGA</div>
+            </div>
+            <div class="login-heading">Bienvenido</div>
+            <div class="login-sub">Ingresá a tu cuenta para continuar</div>
+            <div class="login-field">
+              <label class="login-label">Email</label>
+              <input class="login-input" type="email" value="juan.garcia@gmail.com" readonly>
+            </div>
+            <div class="login-field">
+              <label class="login-label">Contraseña</label>
+              <input class="login-input" type="password" value="••••••••" readonly>
+            </div>
+            <button class="login-btn" onclick="navigateTo(3, 'right')">Ingresar</button>
+            <div class="login-register">¿No tenés cuenta? <a href="#">Registrate</a></div>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             SCREEN 3: HOME / LOAD BOARD
+             ========================================== -->
+        <div class="screen screen-home" id="screen-3" data-screen="3">
+          <div class="status-bar light">
+            <span>9:41</span>
+            <div class="status-icons">
+              <span>📶</span>
+              <span>🔋</span>
+            </div>
+          </div>
+          <div class="home-topbar">
+            <div class="topbar-location">📍 Buenos Aires <span style="font-size:12px;color:var(--gray-400)">▾</span></div>
+            <div class="topbar-right">
+              <div class="topbar-bell">
+                🔔
+                <div class="topbar-bell-badge">3</div>
+              </div>
+              <div class="topbar-avatar">JG</div>
+            </div>
+          </div>
+          <div class="home-search">
+            <input class="search-input" type="text" placeholder="🔍 Buscar cargas..." readonly>
+          </div>
+          <div class="home-filters">
+            <button class="filter-chip active">Todos</button>
+            <button class="filter-chip">Volcador</button>
+            <button class="filter-chip">Semirremolque</button>
+            <button class="filter-chip">Frigorífico</button>
+          </div>
+          <div class="home-section-title">Cargas disponibles (12)</div>
+
+          <!-- Card 1 -->
+          <div class="load-card" onclick="navigateTo(4, 'right')">
+            <div class="load-badge">NUEVO</div>
+            <div class="load-route">Buenos Aires → Córdoba</div>
+            <div class="load-distance">710 km</div>
+            <div class="load-details">
+              <div class="load-detail">📦 Cereales — 25 tn</div>
+              <div class="load-detail">🚛 Semirremolque</div>
+            </div>
+            <div class="load-bottom">
+              <div class="load-price">$285.000 ARS</div>
+              <div class="load-time">Hace 5 min</div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="load-card" onclick="navigateTo(4, 'right')">
+            <div class="load-route">Rosario → Mendoza</div>
+            <div class="load-distance">940 km</div>
+            <div class="load-details">
+              <div class="load-detail">📦 Maquinaria — 18 tn</div>
+              <div class="load-detail">🚛 Volcador</div>
+            </div>
+            <div class="load-bottom">
+              <div class="load-price">$340.000 ARS</div>
+              <div class="load-time">Hace 23 min</div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="load-card" onclick="navigateTo(4, 'right')">
+            <div class="load-route">Córdoba → Tucumán</div>
+            <div class="load-distance">520 km</div>
+            <div class="load-details">
+              <div class="load-detail">📦 Alimentos — 30 tn</div>
+              <div class="load-detail">🚛 Semirremolque Frigorífico</div>
+            </div>
+            <div class="load-bottom">
+              <div class="load-price">$220.000 ARS</div>
+              <div class="load-time">Hace 1h</div>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="load-card" onclick="navigateTo(4, 'right')">
+            <div class="load-route">Buenos Aires → Mar del Plata</div>
+            <div class="load-distance">380 km</div>
+            <div class="load-details">
+              <div class="load-detail">📦 Materiales de construcción — 12 tn</div>
+              <div class="load-detail">🚛 Volcador</div>
+            </div>
+            <div class="load-bottom">
+              <div class="load-price">$145.000 ARS</div>
+              <div class="load-time">Hace 2h</div>
+            </div>
+          </div>
+
+          <!-- Bottom Nav -->
+          <div class="bottom-nav">
+            <button class="nav-item active" onclick="navigateTo(3)"><span class="nav-item-icon">🏠</span>Inicio</button>
+            <button class="nav-item" onclick="navigateTo(6, 'right')"><span class="nav-item-icon">🗺️</span>Mapa</button>
+            <button class="nav-item" onclick="navigateTo(7, 'right')"><span class="nav-item-icon">➕</span>Publicar</button>
+            <button class="nav-item" onclick="showToast()"><span class="nav-item-icon">💬</span>Mensajes</button>
+            <button class="nav-item" onclick="navigateTo(8, 'right')"><span class="nav-item-icon">👤</span>Perfil</button>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             SCREEN 4: LOAD DETAIL
+             ========================================== -->
+        <div class="screen screen-detail" id="screen-4" data-screen="4">
+          <div class="status-bar light">
+            <span>9:41</span>
+            <div class="status-icons">
+              <span>📶</span>
+              <span>🔋</span>
+            </div>
+          </div>
+          <div class="detail-header">
+            <button class="detail-back" onclick="navigateTo(3, 'left')">←</button>
+            <div class="detail-header-title">Detalle de carga</div>
+          </div>
+
+          <div class="detail-route">
+            <div class="detail-city">📍 BUENOS AIRES</div>
+            <div class="detail-arrow">↓</div>
+            <div class="detail-city">📍 CÓRDOBA</div>
+            <div class="detail-distance-badge">710 km · ~8hs estimado</div>
+          </div>
+
+          <div class="detail-card">
+            <h3>Detalles de la carga</h3>
+            <div class="detail-row">
+              <span class="detail-row-label">Tipo de carga</span>
+              <span class="detail-row-value">Cereales</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-row-label">Peso</span>
+              <span class="detail-row-value">25 toneladas</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-row-label">Tipo de camión</span>
+              <span class="detail-row-value">Semirremolque</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-row-label">Fecha de carga</span>
+              <span class="detail-row-value">Lun 14/04 — 07:00hs</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-row-label">Fecha de entrega</span>
+              <span class="detail-row-value">Lun 14/04 — 17:00hs</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-row-label">Observaciones</span>
+              <span class="detail-row-value">Requiere lona. Planta con balanza.</span>
+            </div>
+          </div>
+
+          <div class="detail-card">
+            <h3>Publicado por</h3>
+            <div class="detail-shipper">
+              <div class="detail-shipper-avatar">AS</div>
+              <div>
+                <div class="detail-shipper-name">Agro San Martín S.A.</div>
+                <div class="detail-shipper-meta">⭐ 4.8 · 23 viajes</div>
+              </div>
+            </div>
+            <div class="detail-verified">✅ CUIT verificado</div>
+            <div style="font-size:12px;color:var(--gray-400);margin-top:4px;">Miembro desde 2023</div>
+          </div>
+
+          <div class="detail-price-section">
+            <div class="detail-price">$285.000 ARS</div>
+            <div class="detail-price-note">Tarifa negociable</div>
+          </div>
+
+          <div class="detail-actions">
+            <button class="detail-btn-primary" onclick="navigateTo(5, 'right')">Contactar Cargador</button>
+            <button class="detail-btn-secondary" onclick="navigateTo(6, 'right')">Ver en mapa</button>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             SCREEN 5: WHATSAPP CHAT
+             ========================================== -->
+        <div class="screen screen-chat" id="screen-5" data-screen="5">
+          <div class="chat-header">
+            <button class="chat-back" onclick="navigateTo(4, 'left')">←</button>
+            <div class="chat-contact-avatar">AS</div>
+            <div>
+              <div class="chat-contact-name">Agro San Martín</div>
+              <div class="chat-contact-status">en línea</div>
+            </div>
+          </div>
+
+          <div class="chat-messages">
+            <div class="chat-system">CarGA conectó a Juan García con Agro San Martín</div>
+
+            <div class="chat-bubble chat-bubble-left">
+              Hola! Vi que estás interesado en la carga Buenos Aires → Córdoba 🚛
+              <div class="chat-time">9:41</div>
+            </div>
+
+            <div class="chat-bubble chat-bubble-left">
+              El camión tiene que estar en planta a las 7am del lunes. ¿Podés confirmar?
+              <div class="chat-time">9:41</div>
+            </div>
+
+            <div class="chat-bubble chat-bubble-right">
+              Buenas! Sí, confirmo disponibilidad. ¿Hay balanza en destino?
+              <div class="chat-time">9:42</div>
+            </div>
+
+            <div class="chat-bubble chat-bubble-left">
+              Sí, tienen balanza propia. Te mando la dirección exacta.
+              <div class="chat-time">9:42</div>
+            </div>
+          </div>
+
+          <div class="chat-input-bar">
+            <input class="chat-input" type="text" placeholder="Mensaje..." readonly>
+            <button class="chat-send">➤</button>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             SCREEN 6: MAP VIEW
+             ========================================== -->
+        <div class="screen screen-map" id="screen-6" data-screen="6">
+          <div class="status-bar light">
+            <span>9:41</span>
+            <div class="status-icons">
+              <span>📶</span>
+              <span>🔋</span>
+            </div>
+          </div>
+          <div class="map-header">
+            <div class="map-header-title">Mapa de cargas</div>
+            <div class="map-filter-icon">⚙️</div>
+          </div>
+
+          <div class="map-area">
+            <!-- Fake roads -->
+            <div class="map-road map-road-h" style="top:40%"></div>
+            <div class="map-road map-road-h" style="top:60%"></div>
+            <div class="map-road map-road-h" style="top:25%"></div>
+            <div class="map-road map-road-v" style="left:40%"></div>
+            <div class="map-road map-road-v" style="left:65%"></div>
+            <div class="map-road map-road-d" style="top:45%;left:20%;width:50%;transform:rotate(-20deg)"></div>
+
+            <!-- City labels -->
+            <div class="map-city-label" style="bottom:24%;right:22%">Buenos Aires</div>
+            <div class="map-city-label" style="top:35%;left:28%">Córdoba</div>
+            <div class="map-city-label" style="top:42%;right:20%">Rosario</div>
+            <div class="map-city-label" style="top:35%;left:8%">Mendoza</div>
+            <div class="map-city-label" style="top:18%;left:35%">Tucumán</div>
+            <div class="map-city-label" style="bottom:12%;right:14%">Mar del Plata</div>
+
+            <!-- Current location (Buenos Aires) -->
+            <div class="map-current" style="bottom:28%;right:28%">
+              <div class="map-current-dot"></div>
+            </div>
+
+            <!-- Map pins -->
+            <div class="map-pin" style="top:33%;left:32%" onclick="showMapSheet('Córdoba', 'Buenos Aires → Córdoba', '710 km · Cereales 25tn', '$285.000 ARS')">
+              <div class="map-pin-price gold">$285K</div>
+              <div class="map-pin-dot gold"></div>
+            </div>
+
+            <div class="map-pin" style="top:40%;right:24%" onclick="showMapSheet('Rosario', 'Rosario → Mendoza', '940 km · Maquinaria 18tn', '$340.000 ARS')">
+              <div class="map-pin-price">$340K</div>
+              <div class="map-pin-dot"></div>
+            </div>
+
+            <div class="map-pin" style="top:16%;left:40%" onclick="showMapSheet('Tucumán', 'Córdoba → Tucumán', '520 km · Alimentos 30tn', '$220.000 ARS')">
+              <div class="map-pin-price">$220K</div>
+              <div class="map-pin-dot"></div>
+            </div>
+
+            <div class="map-pin" style="bottom:15%;right:20%" onclick="showMapSheet('Mar del Plata', 'BA → Mar del Plata', '380 km · Materiales 12tn', '$145.000 ARS')">
+              <div class="map-pin-price">$145K</div>
+              <div class="map-pin-dot"></div>
+            </div>
+
+            <div class="map-pin" style="top:33%;left:12%" onclick="showMapSheet('Mendoza', 'Mendoza → BA', '1050 km · Vinos 8tn', '$390.000 ARS')">
+              <div class="map-pin-price">$390K</div>
+              <div class="map-pin-dot"></div>
+            </div>
+
+            <div class="map-pin" style="top:50%;left:45%" onclick="showMapSheet('Santa Fe', 'Santa Fe → Córdoba', '350 km · Soja 30tn', '$175.000 ARS')">
+              <div class="map-pin-price">$175K</div>
+              <div class="map-pin-dot"></div>
+            </div>
+
+            <!-- Bottom sheet -->
+            <div class="map-sheet" id="map-sheet">
+              <div class="map-sheet-route" id="sheet-route"></div>
+              <div class="map-sheet-meta" id="sheet-meta"></div>
+              <div class="map-sheet-price" id="sheet-price"></div>
+              <button class="map-sheet-btn" onclick="navigateTo(4, 'right')">Ver detalle</button>
+            </div>
+          </div>
+
+          <!-- Bottom Nav -->
+          <div class="bottom-nav">
+            <button class="nav-item" onclick="navigateTo(3, 'left')"><span class="nav-item-icon">🏠</span>Inicio</button>
+            <button class="nav-item active" onclick="navigateTo(6)"><span class="nav-item-icon">🗺️</span>Mapa</button>
+            <button class="nav-item" onclick="navigateTo(7, 'right')"><span class="nav-item-icon">➕</span>Publicar</button>
+            <button class="nav-item" onclick="showToast()"><span class="nav-item-icon">💬</span>Mensajes</button>
+            <button class="nav-item" onclick="navigateTo(8, 'right')"><span class="nav-item-icon">👤</span>Perfil</button>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             SCREEN 7: PUBLISH LOAD
+             ========================================== -->
+        <div class="screen screen-publish" id="screen-7" data-screen="7">
+          <div class="status-bar light">
+            <span>9:41</span>
+            <div class="status-icons">
+              <span>📶</span>
+              <span>🔋</span>
+            </div>
+          </div>
+          <div class="publish-header">
+            <div class="publish-header-title">Publicar carga</div>
+          </div>
+
+          <div class="publish-form">
+            <div class="publish-field">
+              <label class="publish-label">Origen</label>
+              <input class="publish-input" type="text" value="Buenos Aires, CABA" readonly>
+            </div>
+            <div class="publish-field">
+              <label class="publish-label">Destino</label>
+              <input class="publish-input" type="text" value="Córdoba Capital" readonly>
+            </div>
+            <div class="publish-row">
+              <div class="publish-field">
+                <label class="publish-label">Tipo de carga</label>
+                <select class="publish-select"><option>Cereales</option></select>
+              </div>
+              <div class="publish-field">
+                <label class="publish-label">Peso estimado</label>
+                <input class="publish-input" type="text" value="25" readonly>
+                <div class="publish-unit">toneladas</div>
+              </div>
+            </div>
+            <div class="publish-field">
+              <label class="publish-label">Tipo de camión requerido</label>
+              <select class="publish-select"><option>Semirremolque</option></select>
+            </div>
+            <div class="publish-field">
+              <label class="publish-label">Fecha de carga</label>
+              <input class="publish-input" type="text" value="2025-04-14" readonly>
+            </div>
+            <div class="publish-field">
+              <label class="publish-label">Tarifa ofrecida</label>
+              <input class="publish-input" type="text" value="$285.000 ARS" readonly>
+            </div>
+            <div class="publish-field">
+              <label class="publish-label">Observaciones</label>
+              <textarea class="publish-textarea" readonly>Requiere lona. Planta con balanza en origen.</textarea>
+            </div>
+            <div class="publish-toggle-row">
+              <span class="publish-toggle-label">Tarifa negociable</span>
+              <div class="toggle"><div class="toggle-dot"></div></div>
+            </div>
+            <button class="publish-btn" onclick="showPublishModal()">Publicar carga</button>
+          </div>
+
+          <!-- Success modal -->
+          <div class="modal-overlay" id="publish-modal">
+            <div class="modal-box">
+              <div class="modal-icon">✅</div>
+              <div class="modal-title">¡Carga publicada!</div>
+              <div class="modal-text">Ya la pueden ver los transportistas.</div>
+              <button class="modal-btn" onclick="hidePublishModal()">Ver mi carga</button>
+            </div>
+          </div>
+
+          <!-- Bottom Nav -->
+          <div class="bottom-nav">
+            <button class="nav-item" onclick="navigateTo(3, 'left')"><span class="nav-item-icon">🏠</span>Inicio</button>
+            <button class="nav-item" onclick="navigateTo(6, 'left')"><span class="nav-item-icon">🗺️</span>Mapa</button>
+            <button class="nav-item active" onclick="navigateTo(7)"><span class="nav-item-icon">➕</span>Publicar</button>
+            <button class="nav-item" onclick="showToast()"><span class="nav-item-icon">💬</span>Mensajes</button>
+            <button class="nav-item" onclick="navigateTo(8, 'right')"><span class="nav-item-icon">👤</span>Perfil</button>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             SCREEN 8: PROFILE
+             ========================================== -->
+        <div class="screen screen-profile" id="screen-8" data-screen="8">
+          <div class="status-bar light">
+            <span>9:41</span>
+            <div class="status-icons">
+              <span>📶</span>
+              <span>🔋</span>
+            </div>
+          </div>
+          <div class="profile-header">
+            <div class="profile-header-title">Mi perfil</div>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-avatar">JG</div>
+            <div class="profile-name">Juan García</div>
+            <div class="profile-verified">✅ CUIT 20-28473691-4 verificado</div>
+            <div class="profile-rating">⭐ 4.9 · 47 viajes realizados</div>
+            <div class="profile-since">CarGA desde enero 2025</div>
+          </div>
+
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <div class="profile-stat-value">47</div>
+              <div class="profile-stat-label">Viajes</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-value">$3.2M</div>
+              <div class="profile-stat-label">Ganado (ARS)</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-value">4.9★</div>
+              <div class="profile-stat-label">Rating</div>
+            </div>
+          </div>
+
+          <div class="profile-section">
+            <div class="profile-section-title">🚛 Mis camiones</div>
+            <div class="profile-truck-card">
+              Mercedes Benz Axor 2544 · Semirremolque · Patente: ABC123
+            </div>
+            <button class="profile-add-btn">+ Agregar camión</button>
+          </div>
+
+          <div class="profile-section">
+            <div class="profile-section-title">📋 Actividad reciente</div>
+            <div class="profile-activity-item">
+              <span>✅ Buenos Aires → Córdoba</span>
+              <span class="profile-activity-amount">$285.000</span>
+            </div>
+            <div class="profile-activity-item">
+              <span>✅ Rosario → Mendoza</span>
+              <span class="profile-activity-amount">$340.000</span>
+            </div>
+            <div class="profile-activity-item">
+              <span>✅ Córdoba → Tucumán</span>
+              <span class="profile-activity-amount">$220.000</span>
+            </div>
+          </div>
+
+          <!-- Bottom Nav -->
+          <div class="bottom-nav">
+            <button class="nav-item" onclick="navigateTo(3, 'left')"><span class="nav-item-icon">🏠</span>Inicio</button>
+            <button class="nav-item" onclick="navigateTo(6, 'left')"><span class="nav-item-icon">🗺️</span>Mapa</button>
+            <button class="nav-item" onclick="navigateTo(7, 'left')"><span class="nav-item-icon">➕</span>Publicar</button>
+            <button class="nav-item" onclick="showToast()"><span class="nav-item-icon">💬</span>Mensajes</button>
+            <button class="nav-item active" onclick="navigateTo(8)"><span class="nav-item-icon">👤</span>Perfil</button>
+          </div>
+        </div>
+
+        <!-- Toast notification -->
+        <div class="toast" id="toast">Próximamente disponible</div>
+
+      </div><!-- /phone-screen -->
+    </div><!-- /phone-frame -->
+  </div><!-- /phone-container -->
+
+  <!-- ==========================================
+       JAVASCRIPT
+       ========================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      var currentScreen = 1;
+      var screenIndicator = document.getElementById('screen-indicator');
+
+      /* ------------------------------------------
+         SCREEN NAVIGATION
+         ------------------------------------------ */
+      window.navigateTo = function (screenNum, direction) {
+        if (screenNum === currentScreen) return;
+
+        var currentEl = document.getElementById('screen-' + currentScreen);
+        var targetEl = document.getElementById('screen-' + screenNum);
+
+        if (!currentEl || !targetEl) return;
+
+        /* Hide current screen */
+        currentEl.classList.remove('active', 'slide-in-right', 'slide-in-left');
+
+        /* Show target with animation */
+        targetEl.classList.add('active');
+        if (direction === 'right') {
+          targetEl.classList.add('slide-in-right');
+        } else if (direction === 'left') {
+          targetEl.classList.add('slide-in-left');
+        }
+
+        /* Scroll target to top */
+        targetEl.scrollTop = 0;
+
+        currentScreen = screenNum;
+
+        /* Update banner indicator */
+        screenIndicator.textContent = 'Pantalla ' + screenNum + ' de 8';
+      };
+
+      /* ------------------------------------------
+         TOAST
+         ------------------------------------------ */
+      var toastTimeout;
+
+      window.showToast = function () {
+        var toast = document.getElementById('toast');
+        toast.classList.add('visible');
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(function () {
+          toast.classList.remove('visible');
+        }, 2000);
+      };
+
+      /* ------------------------------------------
+         MAP BOTTOM SHEET
+         ------------------------------------------ */
+      window.showMapSheet = function (city, route, meta, price) {
+        var sheet = document.getElementById('map-sheet');
+        document.getElementById('sheet-route').textContent = route;
+        document.getElementById('sheet-meta').textContent = meta;
+        document.getElementById('sheet-price').textContent = price;
+        sheet.classList.add('visible');
+      };
+
+      /* Close sheet when tapping map area (not a pin) */
+      document.querySelector('.map-area').addEventListener('click', function (e) {
+        if (!e.target.closest('.map-pin') && !e.target.closest('.map-sheet')) {
+          document.getElementById('map-sheet').classList.remove('visible');
+        }
+      });
+
+      /* ------------------------------------------
+         PUBLISH MODAL
+         ------------------------------------------ */
+      window.showPublishModal = function () {
+        document.getElementById('publish-modal').classList.add('visible');
+      };
+
+      window.hidePublishModal = function () {
+        document.getElementById('publish-modal').classList.remove('visible');
+        navigateTo(3, 'left');
+      };
+    })();
+  </script>
+</body>
+</html>

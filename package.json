@@ -1,0 +1,16 @@
+{
+  "name": "carga-landing",
+  "version": "1.0.0",
+  "description": "CarGA — Landing page and interactive prototype for Argentina's digital load board",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve . -l 3000",
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test --ui",
+    "lint": "npx htmlhint index.html prototype.html"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "htmlhint": "^1.1.4"
+  }
+}

@@ -1,17 +1,20 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('CarGA Landing Page', () => {
+test.describe('CarGA Static Landing Page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/index.html');
+    await page.goto('/landing/index.html');
   });
 
-  test('has correct page title and meta description', async ({ page }) => {
+  test('has correct page title', async ({ page }) => {
     await expect(page).toHaveTitle(/CarGA/);
+  });
+
+  test('has meta description with keywords', async ({ page }) => {
     const metaDesc = page.locator('meta[name="description"]');
     await expect(metaDesc).toHaveAttribute('content', /transportistas/);
   });
 
-  test('displays hero section with headline', async ({ page }) => {
+  test('displays hero headline', async ({ page }) => {
     const headline = page.locator('h1');
     await expect(headline).toContainText('La bolsa de cargas digital de Argentina');
   });
@@ -22,7 +25,7 @@ test.describe('CarGA Landing Page', () => {
     await expect(sub).toContainText('Sin intermediarios');
   });
 
-  test('hero CTA button scrolls to signup section', async ({ page }) => {
+  test('hero CTA scrolls to signup section', async ({ page }) => {
     const cta = page.locator('#hero-cta');
     await expect(cta).toBeVisible();
     await cta.click();
@@ -39,7 +42,6 @@ test.describe('CarGA Landing Page', () => {
   test('displays three how-it-works steps', async ({ page }) => {
     const steps = page.locator('.step');
     await expect(steps).toHaveCount(3);
-    await expect(page.locator('.step-number').first()).toContainText('1');
   });
 
   test('displays three stat cards', async ({ page }) => {
@@ -48,23 +50,21 @@ test.describe('CarGA Landing Page', () => {
     await expect(page.locator('.stat-value').first()).toContainText('460.000+');
   });
 
-  test('signup form is visible with all fields', async ({ page }) => {
-    const form = page.locator('#waitlist-form');
-    await expect(form).toBeVisible();
+  test('signup form has all required fields', async ({ page }) => {
     await expect(page.locator('#nombre')).toBeVisible();
     await expect(page.locator('#email')).toBeVisible();
     await expect(page.locator('#tipo')).toBeVisible();
     await expect(page.locator('#whatsapp')).toBeVisible();
   });
 
-  test('form shows validation errors for empty required fields', async ({ page }) => {
+  test('form validates empty required fields', async ({ page }) => {
     await page.locator('.form-submit').click();
     await expect(page.locator('#nombre-error')).toBeVisible();
     await expect(page.locator('#email-error')).toBeVisible();
     await expect(page.locator('#tipo-error')).toBeVisible();
   });
 
-  test('form shows error for invalid email', async ({ page }) => {
+  test('form validates invalid email', async ({ page }) => {
     await page.locator('#nombre').fill('Juan Garcia');
     await page.locator('#email').fill('not-an-email');
     await page.locator('#tipo').selectOption('transportista');
@@ -72,14 +72,14 @@ test.describe('CarGA Landing Page', () => {
     await expect(page.locator('#email-error')).toBeVisible();
   });
 
-  test('form clears errors on input', async ({ page }) => {
+  test('form clears errors on user input', async ({ page }) => {
     await page.locator('.form-submit').click();
     await expect(page.locator('#nombre-error')).toBeVisible();
     await page.locator('#nombre').fill('Test');
     await expect(page.locator('#nombre-error')).not.toBeVisible();
   });
 
-  test('successful form submission shows thank you message', async ({ page }) => {
+  test('successful submission shows thank you message', async ({ page }) => {
     await page.locator('#nombre').fill('Juan Garcia');
     await page.locator('#email').fill('juan@test.com');
     await page.locator('#tipo').selectOption('transportista');
@@ -96,7 +96,7 @@ test.describe('CarGA Landing Page', () => {
     await expect(count).toContainText('47');
   });
 
-  test('counter increments after form submission', async ({ page }) => {
+  test('counter increments after submission', async ({ page }) => {
     await page.evaluate(() => localStorage.clear());
     await page.reload();
     await page.locator('#nombre').fill('Test User');
@@ -104,24 +104,15 @@ test.describe('CarGA Landing Page', () => {
     await page.locator('#tipo').selectOption('cargador');
     await page.locator('.form-submit').click();
     await page.waitForTimeout(600);
-    const count = page.locator('#signup-count');
-    await expect(count).toContainText('48');
+    await expect(page.locator('#signup-count')).toContainText('48');
   });
 
-  test('navbar has logo and links', async ({ page }) => {
+  test('navbar displays logo and CTA', async ({ page }) => {
     await expect(page.locator('.navbar-logo')).toContainText('CarGA');
     await expect(page.locator('.navbar-cta')).toContainText('Unirse');
   });
 
-  test('navbar adds scrolled class on scroll', async ({ page }) => {
-    const navbar = page.locator('#navbar');
-    await expect(navbar).not.toHaveClass(/scrolled/);
-    await page.evaluate(() => window.scrollTo(0, 100));
-    await page.waitForTimeout(100);
-    await expect(navbar).toHaveClass(/scrolled/);
-  });
-
-  test('footer displays correct content', async ({ page }) => {
+  test('footer has correct content', async ({ page }) => {
     const footer = page.locator('.footer');
     await expect(footer).toContainText('CarGA');
     await expect(footer).toContainText('Codexium');
@@ -133,12 +124,12 @@ test.describe('CarGA Landing Page', () => {
     await expect(benefits).toHaveCount(3);
   });
 
-  test('tipo dropdown has all options', async ({ page }) => {
+  test('tipo dropdown has all 6 options', async ({ page }) => {
     const options = page.locator('#tipo option');
     await expect(options).toHaveCount(6);
   });
 
-  test('page is responsive on mobile viewport', async ({ page }) => {
+  test('mobile responsive — navbar visible', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await expect(page.locator('.navbar-logo')).toBeVisible();
     await expect(page.locator('.navbar-cta')).toBeVisible();

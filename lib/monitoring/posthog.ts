@@ -25,6 +25,7 @@ export function trackEvent(
 
   // TODO: posthog.capture(event, properties);
   if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
     console.info('[PostHog]', event, properties);
   }
 }

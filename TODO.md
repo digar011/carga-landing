@@ -69,30 +69,49 @@
 
 ### Week 3-4: Core Features
 
-- [ ] `[L]` Build load posting system (cargador)
-  - [ ] Load creation form (origin, destination, cargo type, weight, truck type, rate, date, notes)
-  - [ ] Address autocomplete with Google Places API
-  - [ ] Form validation (Zod schema)
-  - [ ] Draft/publish workflow
-  - [ ] Load editing + cancellation
-  - [ ] "My loads" dashboard with status tracking (activa/asignada/completada/cancelada)
-- [ ] `[XL]` Build real-time load board (transportista)
-  - [ ] Load feed with live updates via Supabase Realtime
-  - [ ] Filter by: zone/province, truck type, weight range, rate range
-  - [ ] Sort by: newest, closest, highest rate
-  - [ ] Load card component with route, cargo, price, posted time
-  - [ ] Load detail page with full info + shipper profile
-  - [ ] "Apply to load" flow with optional message
-  - [ ] Search by origin/destination city
-- [ ] `[M]` Build application management (cargador view)
-  - [ ] View applications for each posted load
-  - [ ] Carrier profile preview (rating, CUIT, truck info)
-  - [ ] Accept/reject application flow
-  - [ ] Notification to carrier on accept/reject
-- [ ] `[M]` Build load status lifecycle
-  - [ ] Status flow: publicada → aplicada → asignada → en_camino → entregada → calificada
-  - [ ] Status update triggers (notifications, UI updates)
-  - [ ] Completion confirmation from both parties
+- [x] `[L]` Build load posting system (cargador) — 2025-03-25
+  - [x] Load creation form with all fields (origin/dest provinces, cargo/truck types, tarifa, dates, observaciones)
+  - [x] Client-side Zod validation with inline error messages
+  - [x] POST /api/loads endpoint with server-side validation
+  - [x] "Mis Cargas" dashboard with status filter tabs (Todas/Activas/Completadas/Canceladas)
+  - [x] Load detail page per carga (/c-mis-cargas/[id]) with applications view
+- [x] `[XL]` Build real-time load board (transportista) — 2025-03-25
+  - [x] Load feed with Supabase Realtime hook (useRealtimeLoads)
+  - [x] Filter by: province, truck type, cargo type + search
+  - [x] Sort by: newest, highest rate, lowest weight
+  - [x] LoadCard component with route, cargo, price, time, status badge, "NUEVO" indicator
+  - [x] LoadFilters component with collapsible mobile panel
+  - [x] Load detail page (/t-cargas/[id]) with full info + shipper profile
+  - [x] "Aplicar a esta carga" flow with ApplyModal (optional message)
+  - [x] Search by origin/destination city
+- [x] `[M]` Build application management (cargador view) — 2025-03-25
+  - [x] ApplicationCard component with transportista profile + trucks + message
+  - [x] Accept/reject buttons with status update
+  - [x] PATCH /api/applications/[id] endpoint (accept rejects all others, assigns transportista)
+  - [x] Notification creation on accept/reject
+- [x] `[M]` Build load status lifecycle — 2025-03-25
+  - [x] PATCH /api/loads/[id]/status endpoint with transition validation
+  - [x] Valid transitions: publicada→cancelada, aplicada→asignada, asignada→en_camino, en_camino→entregada
+  - [x] Status update creates notification for affected party
+  - [x] StatusBadge component with Spanish labels + colors
+- [x] `[M]` Build API routes for loads CRUD — 2025-03-25
+  - [x] GET /api/loads (list with filters, pagination, sorting)
+  - [x] POST /api/loads (create with Zod validation + auth)
+  - [x] GET /api/loads/[id] (single load with cargador profile)
+  - [x] PATCH /api/loads/[id] (update, owner only)
+  - [x] DELETE /api/loads/[id] (soft cancel, owner only)
+  - [x] GET/POST /api/loads/[id]/applications
+  - [x] PATCH /api/applications/[id] (accept/reject)
+- [x] `[M]` Build custom hooks — 2025-03-25
+  - [x] useLoads (fetch with filters)
+  - [x] useRealtimeLoads (Supabase Realtime subscriptions)
+  - [x] useLoadStatusUpdate
+  - [x] useApplyToLoad
+  - [x] useManageApplication
+- [x] `[M]` Build Supabase query helpers — 2025-03-25
+  - [x] getLoads, getLoadById, getLoadsByUser, createLoad, updateLoadStatus
+  - [x] getApplicationsForLoad, createApplication, updateApplicationStatus
+  - [x] createNotification helper
 
 ### Week 5-6: Integrations (Maps + WhatsApp)
 

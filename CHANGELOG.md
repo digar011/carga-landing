@@ -16,7 +16,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-*Working on Week 3-4 core features: load board, load posting, application management.*
+*Working on Week 5-6: Google Maps integration + WhatsApp Business API notifications.*
+
+---
+
+## [0.3.0] — Core Load Board Functional — 2025-03-25
+
+> Shippers can post loads. Carriers can browse, filter, search, and apply. Full application management with accept/reject. Status lifecycle with notifications.
+
+### Added
+- Load posting form (cargador): full form with province selectors, cargo/truck type dropdowns, tarifa input, date pickers, Zod validation, submit to API
+- Real-time load board (transportista): LoadCard components, filter panel (province, truck type, sort), search by city, "NUEVO" badge for recent loads
+- Load detail pages for both roles: route display, cargo details, shipper profile, pricing, "Aplicar" button
+- Application system: ApplyModal with optional message, ApplicationCard with transportista profile + trucks, accept/reject flow
+- "Mis Cargas" dashboard (cargador): status filter tabs (Todas/Activas/Completadas/Canceladas), application counts
+- Load detail page per carga with applications list
+- 7 API routes: loads CRUD, applications CRUD, status transitions
+  - `GET/POST /api/loads` — list with filters + create
+  - `GET/PATCH/DELETE /api/loads/[id]` — single load operations
+  - `GET/POST /api/loads/[id]/applications` — applications per load
+  - `PATCH /api/loads/[id]/status` — validated status transitions
+  - `PATCH /api/applications/[id]` — accept/reject (auto-assigns, rejects others)
+- Status lifecycle: publicada → aplicada → asignada → en_camino → entregada → calificada/cancelada
+- 5 custom React hooks: useLoads, useRealtimeLoads, useLoadStatusUpdate, useApplyToLoad, useManageApplication
+- Supabase query layer: getLoads, getLoadById, getLoadsByUser, createLoad, updateLoadStatus, getApplicationsForLoad, createApplication, updateApplicationStatus, createNotification
+- Shared components: LoadCard, LoadFilters, StatusBadge, EmptyState
+- Role-specific components: ApplyModal (transportista), ApplicationCard (cargador)
 
 ---
 

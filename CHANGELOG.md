@@ -16,36 +16,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Pre-launch landing page (`index.html`) with all 6 sections: hero, problem, how it works, market stats, waitlist signup, footer
-- Waitlist signup form with client-side validation and localStorage persistence (base count: 47)
-- Interactive 8-screen mobile app prototype (`prototype.html`) for investor demos
-  - Splash/onboarding, login, load board, load detail, WhatsApp chat simulation, map view, publish load, profile/dashboard
-  - Phone frame on desktop, full-screen on mobile, slide transitions
-- Playwright E2E test suite: 42 tests covering landing page (20) and prototype (22)
-- HTML linting configuration (htmlhint, 0 errors)
-- Full project documentation: README.md, TODO.md, CHANGELOG.md, ONBOARDING.md, PRODUCT.md, CLAUDE.md
-- SEO meta tags, Open Graph, Twitter Cards, JSON-LD structured data on landing page
-- Responsive mobile-first design (navy #1A3C5E / gold #C9922A palette)
-- Sticky navbar with backdrop blur on scroll
-- GitHub repository created and pushed
+*Working on Week 3-4 core features: load board, load posting, application management.*
 
 ---
 
-## [0.2.0] — Foundation Complete (target: end of Week 2)
+## [0.2.0] — Foundation Complete — 2025-03-25
 
-> Next.js 14 project scaffold, Supabase database with all tables and RLS, dual-role auth system, CI/CD pipeline, shared UI components.
+> Next.js 14 project scaffold, Supabase database with all tables and RLS, dual-role auth system, CI/CD pipeline, shared UI components, and all integration wrappers.
 
 ### Added
-- Next.js 14 App Router project initialization with TypeScript strict mode
-- Supabase project with all 10 core tables + RLS policies
-- Dual-role authentication (transportista / cargador / admin)
-- Seed data with realistic Argentine freight scenarios
-- CI/CD pipeline (GitHub Actions: lint, typecheck, test, build)
-- Shared UI component library (Button, Input, Card, Badge, Modal, Select)
-- Responsive layout shell (Header, Sidebar, mobile BottomNav)
-- Sentry error monitoring + PostHog analytics integration
-- Vercel deployment with preview environments
+- Next.js 14 App Router project with TypeScript strict mode (zero errors)
+- Tailwind CSS with CarGA design tokens (navy, gold, brand-blue, brand-green, Inter font)
+- pnpm workspace + Makefile with 15 standard targets
+- 10 Supabase SQL migration files: users, profiles_transportista, profiles_cargador, trucks, loads, load_applications, ratings, notifications, subscriptions, admin_logs
+- 8 custom PostgreSQL enums (user_role, load_status, application_status, truck_type, cargo_type, plan_type, notification_type, subscription_status)
+- RLS policies on all 10 tables with role-based access control
+- Auto-creation trigger: new auth.users → users table row with role from metadata
+- Average rating trigger: auto-recalculate on ratings insert
+- Dual-role authentication: registration with role selection (transportista/cargador), login with role-based redirect
+- Route middleware protecting `/t-*` (transportista), `/c-*` (cargador), `/a-*` (admin) route groups
+- Session management via @supabase/ssr cookies
+- 9 shared UI components: Button, Input, Label, Select, Card, Badge, Modal, Textarea, Spinner
+- 3 layout components: Header (notifications + avatar), Sidebar (role-aware), BottomNav (mobile, role-aware)
+- 17 page routes across transportista (4), cargador (4), admin (4), auth (2), home (1), API (2)
+- Lib wrappers: Supabase (client/server/middleware), WhatsApp Business API, Mercado Pago, AFIP CUIT validation, Google Maps (geocoding + distance), Resend email
+- Sentry error monitoring scaffold + PostHog analytics scaffold with event tracking plan
+- Zod validation schemas for all entities (loads, profiles, trucks, ratings, applications)
+- Utility functions: formatARS, formatDistance, formatRelativeTime, formatDate, getInitials
+- Constants: Argentine provinces, truck/cargo/status labels (Spanish), plan prices, free tier limits
+- CI/CD: GitHub Actions workflow (lint, typecheck, test, build) on push/PR to main/develop
+- Security headers: HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy
+- Seed.sql template with realistic Argentine freight data
+- Welcome email template (Argentine Spanish)
+
+## [0.1.0] — Pre-Launch Landing Page — 2025-03-24
+
+> Static landing page and interactive prototype for investor demos. No backend.
+
+### Added
+- Pre-launch landing page (`public/landing/index.html`) with 6 sections: hero, problem, how it works, market stats, waitlist signup, footer
+- Waitlist signup form with client-side validation and localStorage persistence (base count: 47)
+- Interactive 8-screen mobile app prototype (`public/landing/prototype.html`) for investor demos
+  - Splash/onboarding, login, load board, load detail, WhatsApp chat simulation, map view, publish load, profile/dashboard
+  - Phone frame on desktop, full-screen on mobile, slide transitions
+- Playwright E2E test suite: 42 tests covering landing page (20) and prototype (22)
+- SEO meta tags, Open Graph, Twitter Cards, JSON-LD structured data on landing page
+- Responsive mobile-first design (navy #1A3C5E / gold #C9922A palette)
+- Full project documentation: README.md, TODO.md, CHANGELOG.md, ONBOARDING.md, PRODUCT.md, CLAUDE.md
+- GitHub repository created and pushed
 
 ---
 

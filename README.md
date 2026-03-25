@@ -7,11 +7,12 @@
 <p align="center">Argentina's first digital load board — connecting truck operators with freight shippers in real time.</p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.0-blue" alt="Version">
+  <img src="https://img.shields.io/badge/version-0.2.0-blue" alt="Version">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
   <img src="https://img.shields.io/badge/Next.js-14-black" alt="Next.js 14">
   <img src="https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E" alt="Supabase">
-  <img src="https://img.shields.io/badge/status-pre--launch-orange" alt="Status">
+  <img src="https://img.shields.io/badge/TypeScript-strict-3178C6" alt="TypeScript strict">
+  <img src="https://img.shields.io/badge/status-foundation--complete-blue" alt="Status">
 </p>
 
 ---
@@ -118,71 +119,78 @@ Argentina's trucking sector is massive, essential, and completely undigitized. N
 ```
 carga/
 ├── app/
-│   ├── [locale]/
-│   │   ├── (auth)/
-│   │   │   ├── login/
-│   │   │   └── register/
-│   │   ├── (transportista)/
-│   │   │   ├── dashboard/
-│   │   │   ├── cargas/          # Load board (browse/filter)
-│   │   │   ├── mapa/            # Map view of loads
-│   │   │   └── perfil/
-│   │   ├── (cargador)/
-│   │   │   ├── dashboard/
-│   │   │   ├── publicar/        # Post a load
-│   │   │   ├── mis-cargas/      # My posted loads
-│   │   │   └── perfil/
-│   │   └── (admin)/
-│   │       ├── dashboard/
-│   │       ├── usuarios/
-│   │       ├── cargas/
-│   │       └── reportes/
+│   ├── (auth)/
+│   │   ├── iniciar-sesion/         # Login page
+│   │   ├── registro/               # Registration with role selection
+│   │   └── layout.tsx
+│   ├── (transportista)/            # Carrier routes (prefixed /t-*)
+│   │   ├── t-panel/                # Dashboard
+│   │   ├── t-cargas/               # Load board (browse/filter)
+│   │   ├── t-mapa/                 # Map view of loads
+│   │   ├── t-perfil/               # Profile
+│   │   └── layout.tsx
+│   ├── (cargador)/                 # Shipper routes (prefixed /c-*)
+│   │   ├── c-panel/                # Dashboard
+│   │   ├── c-publicar/             # Post a load
+│   │   ├── c-mis-cargas/           # My posted loads
+│   │   ├── c-perfil/               # Profile
+│   │   └── layout.tsx
+│   ├── (admin)/                    # Admin routes (prefixed /a-*)
+│   │   ├── a-panel/                # Admin dashboard
+│   │   ├── a-usuarios/             # User management
+│   │   ├── a-cargas/               # Load moderation
+│   │   ├── a-reportes/             # Reports
+│   │   └── layout.tsx
 │   ├── api/
-│   │   ├── webhooks/
-│   │   │   ├── whatsapp/
-│   │   │   └── mercadopago/
-│   │   ├── loads/
-│   │   ├── users/
-│   │   └── admin/
-│   ├── layout.tsx
-│   └── page.tsx                 # Landing / marketing page
+│   │   ├── auth/callback/          # Supabase auth callback
+│   │   └── webhooks/               # WhatsApp + Mercado Pago webhooks
+│   ├── globals.css
+│   ├── layout.tsx                  # Root layout (Inter font, metadata)
+│   └── page.tsx                    # Landing / marketing page
 ├── components/
-│   ├── ui/                      # Reusable primitives (Button, Input, Card)
-│   ├── transportista/           # Role-specific components
-│   ├── cargador/
-│   └── shared/                  # Header, Footer, LoadCard, MapView
+│   ├── ui/                         # 9 reusable primitives (Button, Input, Card, etc.)
+│   ├── shared/                     # Header, Sidebar, BottomNav (role-aware)
+│   ├── transportista/              # Role-specific components
+│   └── cargador/
 ├── lib/
-│   ├── supabase/                # Client + server instances
-│   ├── whatsapp/                # WhatsApp Business API wrapper
-│   ├── mercadopago/             # Mercado Pago API wrapper
-│   ├── google-maps/             # Maps JS + Geocoding wrapper
-│   └── afip/                    # CUIT validation
-├── types/                       # All TypeScript types (T-prefix convention)
-├── hooks/                       # Custom React hooks
-├── utils/                       # Pure utility functions
+│   ├── supabase/                   # Client, server, middleware instances
+│   ├── whatsapp/                   # WhatsApp Business API wrapper
+│   ├── mercadopago/                # Mercado Pago API wrapper
+│   ├── google-maps/                # Maps JS + Geocoding + Distance Matrix
+│   ├── afip/                       # CUIT validation
+│   ├── email/                      # Resend email wrapper + templates
+│   └── monitoring/                 # Sentry + PostHog scaffolds
+├── types/                          # All TypeScript types (T-prefix convention)
+├── hooks/                          # Custom React hooks
+├── utils/                          # Validations (Zod), constants, format helpers
 ├── public/
+│   ├── images/                     # App images and assets
+│   └── landing/                    # Static landing page + prototype
 ├── supabase/
-│   ├── migrations/              # All DB migrations (sequential)
-│   └── seed.sql                 # Development seed data
+│   ├── migrations/                 # 10 SQL migration files
+│   └── seed.sql                    # Development seed data
 ├── tests/
-│   ├── e2e/                     # Playwright E2E tests
-│   └── unit/                    # Jest/Vitest unit tests
-├── docs/                        # Extended documentation
+│   ├── e2e/                        # Playwright E2E tests
+│   └── unit/                       # Vitest unit tests
+├── .github/workflows/ci.yml       # GitHub Actions CI pipeline
 ├── .env.example
-├── .env.local                   # Never committed
-├── next.config.ts
+├── middleware.ts                    # Auth + role-based route protection
+├── next.config.mjs
 ├── tailwind.config.ts
 ├── tsconfig.json
 ├── playwright.config.ts
+├── vitest.config.ts
 ├── package.json
+├── Makefile
 ├── CLAUDE.md
 ├── README.md
 ├── TODO.md
 ├── CHANGELOG.md
 ├── ONBOARDING.md
-├── PRODUCT.md
-└── Makefile
+└── PRODUCT.md
 ```
+
+> **Note on route prefixes:** Routes use `t-`, `c-`, `a-` prefixes to avoid Next.js App Router conflicts between route groups sharing the same path names. The middleware enforces role-based access to each prefix.
 
 ---
 
@@ -223,17 +231,15 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-### Currently Available (Pre-MVP)
+### What's Running Now
 
-The repository currently contains the pre-launch landing page and interactive prototype:
+The full Next.js 14 app is scaffolded and builds cleanly. Run `pnpm dev` and visit:
 
-```bash
-# Serve the landing page and prototype
-npx serve . -l 3000
-```
-
-- **Landing page**: `http://localhost:3000/index.html`
-- **Prototype**: `http://localhost:3000/prototype.html`
+- **Home / Landing**: [http://localhost:3000](http://localhost:3000)
+- **Login**: [http://localhost:3000/iniciar-sesion](http://localhost:3000/iniciar-sesion)
+- **Register**: [http://localhost:3000/registro](http://localhost:3000/registro)
+- **Static landing page**: [http://localhost:3000/landing/index.html](http://localhost:3000/landing/index.html)
+- **Investor prototype**: [http://localhost:3000/landing/prototype.html](http://localhost:3000/landing/prototype.html)
 
 ---
 
@@ -399,4 +405,4 @@ CarGA is built under a co-founder model: Codexium contributes full MVP developme
 
 ---
 
-*This README reflects the project as of v0.1.0 (pre-launch landing page + prototype). It will be updated as the MVP is built.*
+*This README reflects the project as of v0.2.0 (foundation complete — Next.js 14 + Supabase scaffold with all tables, auth, UI components, and CI/CD). Last updated: 2025-03-25.*

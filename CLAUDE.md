@@ -77,12 +77,12 @@ Routes use prefixes to avoid Next.js route group conflicts:
 ## Key Rules
 - **Language:** All user-facing content in Argentine Spanish (voseo: "vos", "publicá", "encontrá")
 - **Mobile-first:** Design at 375px first, most truckers use Android phones
-- **No external JS/CSS libraries** (for landing/prototype phase)
-- **No build step required** for landing/prototype
-- TypeScript strict mode when MVP begins — no `any` without justification
-- RLS on every Supabase table — never disable
-- Conventional Commits on all commits
-- Never push directly to main or develop
+- **TypeScript strict mode** — zero `any` without explicit justification comment
+- **RLS on every Supabase table** — never disable, not even for convenience
+- **Conventional Commits** on all commits (feat, fix, docs, chore, refactor, test)
+- **Never push directly to main or develop** — always use PRs
+- **Route prefixes:** `/t-*` transportista, `/c-*` cargador, `/a-*` admin — enforced by middleware
+- **Images:** Place in `public/images/` — use `next/image` for optimization
 
 ## Key Documentation
 | File | Purpose |

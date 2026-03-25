@@ -192,14 +192,14 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-### Currently available (pre-MVP phase)
-The full Next.js app is not yet built. Currently you can serve the landing page and prototype:
+### What you'll see
 
-```bash
-npx serve . -l 3000
-```
-- Landing page: http://localhost:3000/index.html
-- Prototype: http://localhost:3000/prototype.html
+The Next.js app is live with the full scaffold:
+- **Home / Landing**: [http://localhost:3000](http://localhost:3000) — marketing page with hero + stats
+- **Login**: [http://localhost:3000/iniciar-sesion](http://localhost:3000/iniciar-sesion)
+- **Register**: [http://localhost:3000/registro](http://localhost:3000/registro) — role selection (transportista/cargador)
+- **Static landing**: [http://localhost:3000/landing/index.html](http://localhost:3000/landing/index.html)
+- **Investor prototype**: [http://localhost:3000/landing/prototype.html](http://localhost:3000/landing/prototype.html)
 
 ### Common first-run issues
 
@@ -222,21 +222,25 @@ npx serve . -l 3000
 
 ```
 app/
-├── [locale]/
-│   ├── (auth)/           ← Login, register (shared layout, no nav)
-│   ├── (transportista)/  ← Carrier-only pages (load board, map, profile)
-│   ├── (cargador)/       ← Shipper-only pages (post load, my loads, profile)
-│   └── (admin)/          ← Admin backoffice (dashboard, users, moderation)
-├── api/                  ← API routes + webhook handlers
-components/               ← UI primitives + role-specific + shared components
-lib/                      ← API wrappers (Supabase, WhatsApp, Maps, MercadoPago, AFIP)
-types/                    ← All TypeScript types (PascalCase with T prefix)
-hooks/                    ← Custom React hooks
-utils/                    ← Pure utility functions
-supabase/migrations/      ← Database migrations (sequential, never edit manually)
+├── (auth)/               ← Login (/iniciar-sesion), Register (/registro)
+├── (transportista)/      ← Carrier routes: /t-panel, /t-cargas, /t-mapa, /t-perfil
+├── (cargador)/           ← Shipper routes: /c-panel, /c-publicar, /c-mis-cargas, /c-perfil
+├── (admin)/              ← Admin routes: /a-panel, /a-usuarios, /a-cargas, /a-reportes
+├── api/                  ← Auth callback + webhook handlers
+├── page.tsx              ← Landing / marketing page
+components/
+├── ui/                   ← 9 primitives: Button, Input, Label, Select, Card, Badge, Modal, Textarea, Spinner
+├── shared/               ← Header, Sidebar, BottomNav (all role-aware)
+lib/                      ← Supabase, WhatsApp, MercadoPago, AFIP, Google Maps, Resend, Sentry, PostHog
+types/                    ← All TypeScript types (T-prefix: TUser, TLoad, TProfile)
+utils/                    ← Zod validations, constants (provinces, labels), format helpers
+supabase/migrations/      ← 10 SQL migration files (never edit existing ones)
 ```
 
-### Why this structure?
+### Why route prefixes?
+Routes use `t-`, `c-`, `a-` prefixes (e.g., `/t-cargas`, `/c-publicar`, `/a-usuarios`) because Next.js App Router doesn't allow two route groups to resolve to the same path (e.g., both `(transportista)/panel` and `(cargador)/panel` would resolve to `/panel`). The prefix makes each route unique while the middleware enforces role-based access.
+
+### Architecture principles
 - **Route groups** `(transportista)`, `(cargador)`, `(admin)` — each role gets its own layout, nav, and middleware guards. No conditional rendering gymnastics.
 - **Server components by default** — data fetching happens on the server. Client components only where interactivity is needed (maps, forms, real-time subscriptions).
 - **lib/ wrappers** — every external service has a single wrapper. No direct API calls scattered across components.
@@ -245,11 +249,16 @@ supabase/migrations/      ← Database migrations (sequential, never edit manual
 ### Key files every developer should know
 | File | What it does |
 |------|-------------|
-| `lib/supabase/client.ts` | Browser-side Supabase client |
-| `lib/supabase/server.ts` | Server-side Supabase client (uses service role for admin operations) |
 | `middleware.ts` | Route protection — redirects based on auth status + role |
-| `types/database.ts` | Auto-generated Supabase types (run `supabase gen types typescript`) |
-| `supabase/seed.sql` | Test data for local development |
+| `lib/supabase/client.ts` | Browser-side Supabase client (anon key) |
+| `lib/supabase/server.ts` | Server-side Supabase client + service role client |
+| `lib/supabase/middleware.ts` | Session refresh + role-based route guards |
+| `types/database.ts` | All TypeScript types for database entities |
+| `utils/validations.ts` | Zod schemas for all forms (loads, profiles, trucks, ratings) |
+| `utils/constants.ts` | Argentine provinces, truck/cargo/status labels, plan prices |
+| `utils/format.ts` | formatARS, formatDistance, formatRelativeTime helpers |
+| `components/ui/index.ts` | Barrel export for all 9 UI primitives |
+| `supabase/seed.sql` | Test data template for local development |
 
 ---
 

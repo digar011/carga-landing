@@ -32,36 +32,40 @@
 
 ### Week 1-2: Foundation
 
-- [ ] `[M]` Initialize Next.js 14 project with App Router + TypeScript strict mode
-- [ ] `[S]` Configure Tailwind CSS with CarGA design tokens (navy, gold, grays)
-- [ ] `[S]` Set up pnpm workspace + Makefile with standard targets
-- [ ] `[M]` Create Supabase project + configure local development with Supabase CLI
-- [ ] `[L]` Design and create all database tables with migrations
-  - [ ] `users` table (id, email, role, created_at)
-  - [ ] `profiles_transportista` (user_id, nombre, cuit, telefono, whatsapp, rating, total_viajes, verified, plan, habilitaciones)
-  - [ ] `profiles_cargador` (user_id, empresa, cuit, contacto, rating, total_cargas, verified, plan)
-  - [ ] `trucks` (id, transportista_id, tipo, patente, capacidad_tn, marca, modelo, año)
-  - [ ] `loads` (id, cargador_id, origen_lat/lng/ciudad, destino_lat/lng/ciudad, tipo_carga, peso_tn, tipo_camion_requerido, tarifa_ars, tarifa_negociable, fecha_carga, estado, created_at)
-  - [ ] `load_applications` (id, load_id, transportista_id, mensaje, estado, created_at)
-  - [ ] `ratings` (id, from_user, to_user, load_id, score, comentario, created_at)
-  - [ ] `notifications` (id, user_id, tipo, mensaje, leida, created_at)
-  - [ ] `subscriptions` (id, user_id, plan, estado, mp_subscription_id, created_at)
-  - [ ] `admin_logs` (id, admin_id, action, entity, entity_id, created_at)
-- [ ] `[M]` Write RLS policies for all tables (role-based access: transportista, cargador, admin)
-- [ ] `[L]` Implement dual-role auth system
-  - [ ] Supabase Auth configuration (email + phone)
-  - [ ] Registration flow: role selection (transportista/cargador)
-  - [ ] Login flow with role-based redirect
-  - [ ] Protected route middleware per role group
-  - [ ] Session management + refresh token handling
-- [ ] `[M]` Create seed.sql with realistic Argentine test data (50 loads, 20 transportistas, 10 cargadores)
-- [ ] `[S]` Set up Sentry error monitoring for Next.js (server + client)
-- [ ] `[S]` Set up PostHog analytics + initial event tracking
-- [ ] `[M]` Configure CI/CD pipeline (GitHub Actions: lint, typecheck, test, build)
+- [x] `[M]` Initialize Next.js 14 project with App Router + TypeScript strict mode — 2025-03-25
+- [x] `[S]` Configure Tailwind CSS with CarGA design tokens (navy, gold, grays) — 2025-03-25
+- [x] `[S]` Set up pnpm workspace + Makefile with standard targets — 2025-03-25
+- [x] `[M]` Create Supabase migrations + configure local development — 2025-03-25
+- [x] `[L]` Design and create all database tables with migrations — 2025-03-25
+  - [x] `users` table with role enum + auto-creation trigger
+  - [x] `profiles_transportista` with CUIT validation, ratings, plan
+  - [x] `profiles_cargador` with empresa, CUIT, rating, plan
+  - [x] `trucks` with tipo enum, patente uniqueness
+  - [x] `loads` with origin/dest coords, cargo/truck types, status lifecycle
+  - [x] `load_applications` with unique constraint per load/carrier
+  - [x] `ratings` with score check 1-5, avg rating triggers
+  - [x] `notifications` with tipo enum, JSONB metadata
+  - [x] `subscriptions` with MP integration fields
+  - [x] `admin_logs` with audit trail
+- [x] `[M]` Write RLS policies for all tables (role-based access: transportista, cargador, admin) — 2025-03-25
+- [x] `[L]` Implement dual-role auth system — 2025-03-25
+  - [x] Supabase Auth configuration (email)
+  - [x] Registration flow: role selection (transportista/cargador) with Suspense boundary
+  - [x] Login flow with role-based redirect
+  - [x] Protected route middleware per role group (t-/c-/a- prefixed routes)
+  - [x] Session management via @supabase/ssr cookies
+- [x] `[M]` Create seed.sql with realistic Argentine test data — 2025-03-25
+- [x] `[S]` Set up Sentry error monitoring scaffold — 2025-03-25
+- [x] `[S]` Set up PostHog analytics scaffold + event tracking plan — 2025-03-25
+- [x] `[M]` Configure CI/CD pipeline (GitHub Actions: lint, typecheck, test, build) — 2025-03-25
 - [ ] `[S]` Set up Vercel project + preview environments for PRs
-- [ ] `[M]` Create shared UI component library (Button, Input, Card, Badge, Modal, Select)
-- [ ] `[M]` Build responsive layout shell (Header, Sidebar, BottomNav for mobile)
-- [ ] `[S]` Configure Resend for transactional emails (welcome, password reset)
+- [x] `[M]` Create shared UI component library (Button, Input, Card, Badge, Modal, Select, Textarea, Spinner, Label) — 2025-03-25
+- [x] `[M]` Build responsive layout shell (Header, Sidebar, BottomNav for mobile) — 2025-03-25
+- [x] `[S]` Configure Resend email scaffold + welcome email template — 2025-03-25
+- [x] `[M]` Create lib wrappers: WhatsApp, Mercado Pago, AFIP CUIT, Google Maps — 2025-03-25
+- [x] `[M]` Create Zod validation schemas for all entities — 2025-03-25
+- [x] `[M]` Create utility functions (format ARS, distances, relative time, constants) — 2025-03-25
+- [x] `[S]` Security headers (HSTS, CSP, X-Frame-Options) in next.config.mjs — 2025-03-25
 
 ### Week 3-4: Core Features
 

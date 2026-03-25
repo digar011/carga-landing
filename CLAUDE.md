@@ -8,19 +8,25 @@ CarGA is Argentina's first digital load board — a two-sided marketplace connec
 **Company:** Built by Codexium (codexium.ai) under a co-founder model. Pre-money valuation: USD 200,000.
 
 ## Current State
-Pre-MVP. Repository contains:
-- `index.html` — Production landing page with waitlist signup form
-- `prototype.html` — 8-screen interactive mobile app prototype for investor demos
+Phase 1 Week 1-2 Foundation complete. Next.js 14 app scaffold is built and compiles cleanly.
+- `public/landing/index.html` — Pre-launch landing page
+- `public/landing/prototype.html` — 8-screen interactive prototype for investor demos
+- Full Next.js 14 app with App Router, TypeScript strict, Tailwind CSS
+- 10 Supabase migration files with all tables + RLS policies
+- Dual-role auth system (transportista/cargador/admin) with middleware
+- 9 shared UI components, 3 layout components (Header, Sidebar, BottomNav)
+- Lib wrappers for all integrations (Supabase, WhatsApp, MercadoPago, AFIP, Google Maps, Resend, Sentry, PostHog)
+- CI/CD pipeline (GitHub Actions)
 
-MVP will be a full Next.js 14 + Supabase application (see TODO.md for full roadmap).
-
-## Tech Stack — Current
+## Tech Stack — Active
 | Layer | Technology |
 |-------|-----------|
-| Landing/Prototype | Single HTML files, vanilla CSS + JS |
-| Fonts | Google Fonts (Inter) |
-| Testing | Playwright E2E (42 tests) |
-| Linting | htmlhint |
+| Frontend | Next.js 14 (App Router), TypeScript strict, Tailwind CSS |
+| Database | Supabase (PostgreSQL + Realtime + Auth) — 10 tables with RLS |
+| Package Manager | pnpm 9 |
+| Testing | Vitest (unit) + Playwright (E2E) |
+| Linting | ESLint (next/core-web-vitals) |
+| CI/CD | GitHub Actions |
 
 ## Tech Stack — MVP Target
 | Layer | Technology |
@@ -48,18 +54,21 @@ MVP will be a full Next.js 14 + Supabase application (see TODO.md for full roadm
 
 ## Development Commands
 ```bash
-# Serve static files (current)
-npx serve . -l 3000
-
-# Lint HTML
-npx htmlhint index.html prototype.html
-
-# Run E2E tests
-npx playwright test
-
-# Install Playwright browsers
-npx playwright install chromium
+pnpm dev              # Start Next.js dev server
+pnpm build            # Production build
+pnpm lint             # ESLint
+pnpm typecheck        # TypeScript strict check
+pnpm test             # Vitest unit tests
+pnpm test:e2e         # Playwright E2E tests
+make ci               # Full CI pipeline: lint + typecheck + test + build
+make help             # Show all Makefile targets
 ```
+
+## Route Structure
+Routes use prefixes to avoid Next.js route group conflicts:
+- `/t-*` — Transportista routes (t-panel, t-cargas, t-mapa, t-perfil)
+- `/c-*` — Cargador routes (c-panel, c-publicar, c-mis-cargas, c-perfil)
+- `/a-*` — Admin routes (a-panel, a-usuarios, a-cargas, a-reportes)
 
 ## Two User Types
 1. **Transportistas (Carriers)** — Browse loads, filter by zone/truck type/rate, get WhatsApp alerts, manage profile/ratings/CUIT

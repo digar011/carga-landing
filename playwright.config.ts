@@ -12,8 +12,9 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'npx serve . -l 3000',
+    command: 'pnpm dev',
     port: 3000,
     reuseExistingServer: !process.env.CI,
+    timeout: 30000,
   },
 });

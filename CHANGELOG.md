@@ -16,7 +16,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-*Working on Week 5-6: Google Maps integration + WhatsApp Business API notifications.*
+*Working on Week 7-8: Mercado Pago payments, CUIT verification, ratings system.*
+
+---
+
+## [0.4.0] — Maps + WhatsApp Integrated — 2025-03-25
+
+> Interactive load map with Google Maps. WhatsApp Business API for real-time notifications. Matching engine connects loads to carriers.
+
+### Added
+- Google Maps interactive map view (`/t-mapa`) showing loads as markers
+  - MapView component with dynamic script loading, marker InfoWindows, "Mi ubicación" button
+  - useGoogleMaps hook for script state management
+  - Side panel (desktop) / bottom sheet (mobile) for selected load details
+  - Server-side geocoding helper with province fallback
+  - Distance Matrix calculation on load creation
+- WhatsApp Business API integration
+  - Webhook endpoint for Meta verification + message/status handling
+  - 5 message template builders: carga_nueva, postulacion_aceptada, postulacion_rechazada, estado_carga, bienvenida
+  - Load matching engine: finds transportistas by truck type + province + paid plan
+  - Batch notification sender with rate limiting (1/user/hour)
+  - High-level helpers: notifyApplicationAccepted/Rejected, notifyLoadStatusChange, sendWelcomeNotification
+  - WhatsApp-first delivery with in-app notification fallback
+- Mercado Pago webhook scaffold (`/api/webhooks/mercadopago`)
+  - Handles payment, subscription_preapproval, subscription_authorized_payment events
+  - Placeholder handlers for Week 7-8 full implementation
 
 ---
 

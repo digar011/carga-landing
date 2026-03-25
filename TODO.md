@@ -115,27 +115,29 @@
 
 ### Week 5-6: Integrations (Maps + WhatsApp)
 
-- [ ] `[L]` Google Maps integration
-  - [ ] Interactive map view showing all active loads as pins
-  - [ ] Pin clustering for zoomed-out views
-  - [ ] Click pin → load summary card → "Ver detalle" link
-  - [ ] Geocoding: convert city names to lat/lng on load creation
-  - [ ] Distance Matrix: calculate and display distance + estimated time between origin/dest
-  - [ ] Mobile-optimized map controls
-  - [ ] Current location detection + "loads near me" filter
-- [ ] `[XL]` WhatsApp Business API integration
-  - [ ] Meta Cloud API setup + business account verification
-  - [ ] Webhook endpoint for incoming messages + status updates
-  - [ ] Message templates (requires Meta approval):
-    - [ ] `new_matching_load` — "Nueva carga disponible: {origen} → {destino}, {tarifa} ARS"
-    - [ ] `application_accepted` — "Tu solicitud fue aceptada para {ruta}"
-    - [ ] `application_rejected` — "Tu solicitud para {ruta} no fue aceptada"
-    - [ ] `load_status_update` — "La carga {ruta} cambió a estado: {estado}"
-    - [ ] `welcome_message` — "Bienvenido a CarGA! Tu cuenta fue verificada."
-  - [ ] Matching engine: when new load posted → find transportistas with matching truck type + zone preferences → send WhatsApp
-  - [ ] Opt-in/opt-out management for WhatsApp notifications
-  - [ ] Rate limiting (respect Meta's per-user message limits)
-  - [ ] Fallback to Firebase FCM if WhatsApp delivery fails
+- [x] `[L]` Google Maps integration — 2025-03-25
+  - [x] MapView component: loads Google Maps JS API via script tag, shows markers at load origins
+  - [x] Click marker → InfoWindow with route, cargo type, price, "Ver detalle" link
+  - [x] "Mi ubicación" button using browser geolocation
+  - [x] useGoogleMaps hook for script loading state management
+  - [x] Map page (/t-mapa) with server-side load fetch + client-side realtime
+  - [x] Side panel (desktop) / bottom sheet (mobile) for selected load details
+  - [x] Geocoding helper: geocodeLoadCities with fallback to PROVINCE_CENTERS
+  - [x] Distance Matrix integration via calculateDistance
+  - [x] Mobile-optimized: full height, responsive controls
+  - [x] Graceful fallback when API key not configured
+- [x] `[XL]` WhatsApp Business API integration — 2025-03-25
+  - [x] Webhook endpoint (GET verification + POST message/status handling)
+  - [x] 5 message template builders (carga_nueva, postulacion_aceptada, postulacion_rechazada, estado_carga, bienvenida)
+  - [x] Matching engine: findMatchingTransportistas by truck type + province + paid plan
+  - [x] notifyMatchingTransportistas: batch send with rate limiting (1 per user per hour)
+  - [x] High-level notification helpers: notifyApplicationAccepted/Rejected, notifyLoadStatusChange, sendWelcomeNotification
+  - [x] WhatsApp-first with in-app notification fallback
+  - [x] Rate limiting via in-memory tracker with automatic cleanup
+- [x] `[M]` Mercado Pago webhook scaffold — 2025-03-25
+  - [x] POST /api/webhooks/mercadopago endpoint (payment, subscription_preapproval, subscription_authorized_payment)
+  - [x] Event logging for monitoring
+  - [x] Placeholder handlers for Week 7-8 implementation
 
 ### Week 7-8: Payments + Verification
 

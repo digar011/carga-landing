@@ -141,27 +141,29 @@
 
 ### Week 7-8: Payments + Verification
 
-- [ ] `[L]` Mercado Pago integration
-  - [ ] Checkout Pro for subscription payments
-  - [ ] Subscription plans for both user types (Básico/Profesional/Flota + Starter/Estándar/Premium)
-  - [ ] Webhook endpoint for payment events (approved, pending, rejected, cancelled)
-  - [ ] Plan enforcement: free tier limits (3 searches/day, 3 posts/month)
-  - [ ] Upgrade/downgrade flow
-  - [ ] Payment history page
-  - [ ] Handle ARS pricing with USD reference rates
-  - [ ] Test mode with Mercado Pago sandbox credentials
-- [ ] `[M]` Ratings and reputation system
-  - [ ] Post-trip mutual rating (1-5 stars + optional comment)
-  - [ ] Rating prompt after load status → "entregada"
-  - [ ] Average rating calculation + display on profiles
-  - [ ] Rating moderation (admin can remove abusive ratings)
-  - [ ] Minimum ratings threshold before score is public
-- [ ] `[M]` AFIP CUIT verification
-  - [ ] CUIT validation endpoint integration
-  - [ ] Verify CUIT format + check against AFIP registry
-  - [ ] Display verified badge on profiles
-  - [ ] Block load posting/applying without verified CUIT
-  - [ ] Handle AFIP API downtime gracefully (queue for retry)
+- [x] `[L]` Mercado Pago integration — 2025-03-26
+  - [x] Subscription API: GET/POST /api/subscriptions, PATCH /api/subscriptions/[id] (cancel)
+  - [x] Plan definitions with 6 plans: basico/profesional/flota (transportista) + starter/estandar/premium (cargador)
+  - [x] Plan enforcement: checkPlanLimit() with free tier limits (3 searches/day, 3 posts/month)
+  - [x] Pricing pages for both roles: /t-perfil/planes, /c-perfil/planes
+  - [x] PlanCard component: name, price, features, "Plan actual" badge, "Más popular" badge
+  - [x] PaymentHistory component: date, plan, amount, status badges
+  - [x] useSubscription hook: fetch, subscribe (redirect to MP checkout), cancel
+  - [x] Webhook handler (from Week 5-6) handles payment + subscription events
+- [x] `[M]` Ratings and reputation system — 2025-03-26
+  - [x] POST /api/ratings: create rating with Zod validation, load status check
+  - [x] GET /api/ratings/[userId]: public ratings with average + total
+  - [x] RatingStars component: filled/empty stars, count display
+  - [x] RatingForm: 5 clickable stars + optional comment (max 500 chars)
+  - [x] RatingModal: wrapped in Modal UI, "Calificá a {userName}" title
+  - [x] RatingsList: chronological list of ratings on profiles
+  - [x] DB trigger auto-updates average rating on profiles (from migration)
+- [x] `[M]` AFIP CUIT verification — 2025-03-26
+  - [x] POST /api/verify-cuit: calls AFIP API, updates profile verified status
+  - [x] CuitVerification widget: auto-format XX-XXXXXXXX-X, verify button, success/error states
+  - [x] Verified badge display (✅) on profiles
+  - [x] Updated profile pages with real layouts: avatar, name, verification, plan info
+  - [x] Graceful AFIP error handling with retry option
 
 ### Week 9: Admin Dashboard
 

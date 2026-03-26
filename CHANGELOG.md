@@ -16,7 +16,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-*Working on Week 7-8: Mercado Pago payments, CUIT verification, ratings system.*
+*Working on Week 9: Admin dashboard.*
+
+---
+
+## [0.5.0] — Payments + CUIT Verification + Ratings — 2025-03-26
+
+> Mercado Pago subscriptions, AFIP CUIT verification, and mutual ratings system.
+
+### Added
+- Mercado Pago subscription system
+  - 6 subscription plans: Básico/Profesional/Flota (transportista), Starter/Estándar/Premium (cargador)
+  - Subscription API: create, cancel, and query endpoints
+  - Plan enforcement with free tier limits (3 searches/day, 3 posts/month)
+  - Pricing pages for both roles with PlanCard components
+  - PaymentHistory component for transaction history
+  - useSubscription hook for client-side management
+- Ratings and reputation system
+  - POST /api/ratings: validated mutual rating (1-5 stars + optional comment)
+  - GET /api/ratings/[userId]: public ratings query with averages
+  - RatingStars, RatingForm, RatingModal, RatingsList components
+  - DB triggers auto-recalculate profile average ratings
+- AFIP CUIT verification
+  - POST /api/verify-cuit: real AFIP API validation
+  - CuitVerification widget with auto-formatting (XX-XXXXXXXX-X)
+  - Verified badge display on all profiles
+  - Updated profile pages with real layouts (avatar, plan info, verification)
+  - Graceful error handling for AFIP downtime
 
 ---
 

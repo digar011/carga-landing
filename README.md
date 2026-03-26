@@ -231,6 +231,23 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+### Set Up Test Users
+
+After configuring Supabase, create the initial users:
+
+```bash
+make setup-users
+```
+
+### Test Accounts
+
+| Role | Email | Password |
+|------|-------|----------|
+| **Transportista** (test user) | `testuser@carga.com.ar` | `CarGA-Test-2025!` |
+| **Admin** (test admin) | `testadmin@carga.com.ar` | `CarGA-Admin-2025!` |
+
+> **Note:** The primary admin account (`diego.j.garnica@gmail.com`) is also created by the setup script but credentials are not listed here for security. See `scripts/setup-users.mjs` for details.
+
 ### What's Running Now
 
 The full Next.js 14 app is scaffolded and builds cleanly. Run `pnpm dev` and visit:

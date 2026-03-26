@@ -186,9 +186,21 @@ supabase db seed
 # Install dependencies
 pnpm install
 
+# Set up test users (requires Supabase connection)
+make setup-users
+
 # Start the development server
 pnpm dev
 ```
+
+### Test Accounts
+
+| Role | Email | Password |
+|------|-------|----------|
+| **Transportista** | `testuser@carga.com.ar` | `CarGA-Test-2025!` |
+| **Admin** | `testadmin@carga.com.ar` | `CarGA-Admin-2025!` |
+
+The primary admin account (`diego.j.garnica@gmail.com`) is also provisioned by the setup script. Credentials are in `scripts/setup-users.mjs` (gitignored from public docs for security).
 
 Open [http://localhost:3000](http://localhost:3000).
 

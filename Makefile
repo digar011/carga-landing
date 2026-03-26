@@ -70,6 +70,9 @@ db-studio: ## Open Supabase Studio
 	@echo "Open http://localhost:54323 in your browser"
 	supabase start
 
+setup-users: ## Create initial admin and test users in Supabase
+	node scripts/setup-users.mjs
+
 # --- Deployment ---
 
 deploy-preview: ## Deploy preview to Vercel

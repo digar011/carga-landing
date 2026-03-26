@@ -37,6 +37,7 @@
 - [x] `[S]` Set up pnpm workspace + Makefile with standard targets — 2025-03-25
 - [x] `[M]` Create Supabase migrations + configure local development — 2025-03-25
 - [x] `[L]` Design and create all database tables with migrations — 2025-03-25
+  > ⚠️ **FINTECH NOTE:** Schema must capture payment timing, completion rates, dispute rates, and reliability data from Day 1 — this transaction data feeds the Phase 4 fintech credit scoring model for Fuel Credit and Factoring products. See [Phase 4 — Fintech Expansion](#-phase-4--fintech-expansion-year-2-3) for full data requirements.
   - [x] `users` table with role enum + auto-creation trigger
   - [x] `profiles_transportista` with CUIT validation, ratings, plan
   - [x] `profiles_cargador` with empresa, CUIT, rating, plan
@@ -259,6 +260,252 @@
 
 ---
 
+## 💳 Phase 4 — Fintech Expansion (Year 2-3)
+
+> **Strategic context:** This follows the proven playbook of Frete.com (Brazil, built FretePago as separate fintech entity after marketplace maturity) and BlackBuck (India, built BlackBuck Finserve as separate NBFC after years of marketplace data). Both reached USD 1B+ valuations largely because of their fintech products, not just marketplace software. CarGA's fintech products require a **separate capital raise** (USD 117K-227K) and a **separate BCRA-regulated legal entity** — they are deliberately excluded from the MVP investment ask. The marketplace must first establish 12+ months of transaction history to build the credit scoring models these products depend on.
+
+### Regulatory & Legal Foundation (Start Month 12 — Cannot Wait)
+
+- [ ] `[M]` Research BCRA Circular A 7193 and factoring authorization requirements for fintech SAS in Argentina
+- [ ] `[M]` Research BCRA Communication A 6885 (digital lending) and requirements for revolving credit products
+- [ ] `[L]` Engage Argentine fintech legal counsel specializing in BCRA-regulated entities (budget: USD 8,000-12,000)
+- [ ] `[M]` Map all regulatory requirements: capital minimums, reporting obligations, consumer protection rules under Ley 24.240
+- [ ] `[L]` Draft corporate structure: constitute separate SAS (Sociedad por Acciones Simplificada) for fintech operations
+  - [ ] Define equity split between marketplace entity and fintech entity
+  - [ ] Establish board structure with compliance officer role
+  - [ ] Register fintech SAS with IGJ (Inspección General de Justicia)
+- [ ] `[L]` File BCRA authorization application for credit facilitation activities
+  - [ ] Prepare required documentation: business plan, capital proof, AML/KYC procedures
+  - [ ] Submit to BCRA Gerencia de Entidades No Financieras
+  - [ ] Budget 6-18 months for approval process
+- [ ] `[M]` Design AML/KYC compliance framework per UIF (Unidad de Información Financiera) Resolution 30/2017
+  - [ ] Customer due diligence procedures for credit recipients
+  - [ ] Suspicious activity reporting (ROS) workflow
+  - [ ] Record retention policies (10 years per UIF requirements)
+- [ ] `[L]` Develop ARS/USD hedging strategy for working capital float
+  - [ ] Research ROFEX (Rosario Futures Exchange) hedging instruments
+  - [ ] Evaluate dollar-linked bonds (bonos dólar linked) for float protection
+  - [ ] Define maximum currency exposure limits
+  - [ ] Establish relationship with FX broker for operational hedging
+- [ ] `[M]` Draft standard legal documentation templates
+  - [ ] Fuel credit agreement (contrato de crédito para combustible)
+  - [ ] Factoring assignment agreement (contrato de cesión de crédito)
+  - [ ] General terms and conditions for financial products
+  - [ ] Privacy addendum for financial data processing (Ley 25.326 compliance)
+- [ ] `[S]` Engage external auditor for annual compliance reviews
+- [ ] `[S]` Register with UIF as obligated reporting entity (sujeto obligado)
+
+### Data Infrastructure (Start in MVP — Critical for Credit Scoring)
+
+> These tasks feed into the fintech credit scoring model. The schema and tracking must be built into the MVP from Day 1, even though the fintech products launch in Year 2-3.
+
+- [ ] `[M]` Design `payment_events` table: track when cargador pays for each completed load
+  - [ ] Fields: load_id, cargador_id, amount_ars, invoice_date, due_date, paid_date, days_to_pay, payment_method
+  - [ ] RLS: cargador reads own, admin reads all
+- [ ] `[M]` Design `user_reliability_scores` materialized view
+  - [ ] Transportista: completion_rate, on_time_rate, avg_rating, loads_per_month, revenue_per_month, cancellation_rate, dispute_rate
+  - [ ] Cargador: avg_days_to_pay, payment_default_rate, avg_load_value, total_loads_posted, dispute_rate
+  - [ ] Refresh schedule: daily via pg_cron or Supabase Edge Function
+- [ ] `[S]` Add `completed_at` timestamp to loads table for precise delivery timing tracking
+- [ ] `[S]` Add `payment_received_at` timestamp to loads table for payment timing per cargador
+- [ ] `[M]` Design `disputes` table: track disputes between parties
+  - [ ] Fields: load_id, initiated_by, reason, status (abierta/resuelta/escalada), resolution, created_at, resolved_at
+  - [ ] Used for both marketplace quality and credit risk assessment
+- [ ] `[M]` Build payment timing tracking pipeline
+  - [ ] Instrument load completion → payment receipt flow with timestamps
+  - [ ] Calculate rolling 90-day average days-to-pay per cargador
+  - [ ] Flag cargadores with deteriorating payment patterns
+- [ ] `[M]` Build transportista reliability scoring pipeline
+  - [ ] Track load acceptance → pickup → delivery timeline
+  - [ ] Calculate rolling completion rate (completed / accepted)
+  - [ ] Score on-time delivery rate vs. estimated delivery date
+  - [ ] Track monthly income consistency (coefficient of variation)
+- [ ] `[L]` Set up data warehouse for financial analysis
+  - [ ] Evaluate Supabase pg_analytics or external warehouse (BigQuery/Redshift)
+  - [ ] Build ETL pipeline: marketplace events → analytics tables
+  - [ ] Define data retention policies (financial data: 10 years per BCRA)
+- [ ] `[M]` Build route economics dataset
+  - [ ] Average tarifa per route (origin_provincia → destino_provincia)
+  - [ ] Seasonal patterns by month and cargo type
+  - [ ] Rate trend analysis (increasing/decreasing by corridor)
+- [ ] `[S]` Add PostHog events for all financial-relevant actions
+  - [ ] `load_payment_received`, `payment_overdue`, `dispute_opened`, `dispute_resolved`
+  - [ ] `credit_score_calculated`, `reliability_score_updated`
+
+### Fuel Credit Product
+
+> Revolving credit line for transportistas for fuel purchases. CarGA pays the fuel station, transportista repays when they receive load payment. Revenue: 3-5% fee per credit cycle.
+
+- [ ] `[L]` Define fuel credit product specification
+  - [ ] Credit limit calculation formula based on: monthly income, completion rate, platform tenure, rating
+  - [ ] Repayment terms: net-30 from load payment receipt, automatic deduction
+  - [ ] Interest/fee structure: 3-5% per cycle, late payment penalties
+  - [ ] Default definition: 60+ days past due
+  - [ ] Eligibility criteria: 6+ months on platform, 90%+ completion rate, 4.0+ rating, verified CUIT
+- [ ] `[XL]` Build credit scoring model for transportistas
+  - [ ] Feature engineering: income_consistency, completion_rate, on_time_rate, platform_tenure_months, avg_rating, dispute_count, cancellation_rate
+  - [ ] Train logistic regression model on 12+ months of marketplace data
+  - [ ] Define score bands: A (auto-approve), B (manual review), C (decline)
+  - [ ] Backtesting framework: simulate model on historical data
+  - [ ] Model monitoring: track prediction accuracy monthly
+- [ ] `[L]` Build fuel station partnership network
+  - [ ] Research YPF, Shell, Axion fuel networks and B2B payment APIs
+  - [ ] Negotiate bulk discount agreements (target 2-3% below retail)
+  - [ ] Build fuel station payment integration (QR code or virtual card)
+  - [ ] Onboard initial 50 fuel stations on BA-Córdoba-Rosario corridor
+- [ ] `[L]` Build float management system
+  - [ ] Working capital pool tracking (initial target: USD 50,000)
+  - [ ] Real-time utilization dashboard (total extended vs. available)
+  - [ ] Automated alerts at 70%, 85%, 95% utilization thresholds
+  - [ ] Daily reconciliation: credits extended vs. repayments received
+- [ ] `[M]` Build credit application and approval flow
+  - [ ] Transportista-facing: view available credit, request increase, see repayment schedule
+  - [ ] Admin-facing: review applications in Band B, approve/reject with notes
+  - [ ] Automated approval for Band A (credit score above threshold)
+- [ ] `[M]` Build repayment tracking system
+  - [ ] Automatic deduction from load payment when received
+  - [ ] Manual repayment option via Mercado Pago
+  - [ ] Payment reminder notifications: 7 days before due, on due date, 3 days overdue
+  - [ ] Grace period handling (5 business days before penalty)
+- [ ] `[L]` Build default and collections process
+  - [ ] Automated escalation: overdue → reminder → warning → suspended → collections
+  - [ ] Platform access suspension for 60+ day defaults
+  - [ ] Integration with Argentine credit bureau (Veraz/Nosis) for reporting defaults
+  - [ ] Legal collection letter generation (carta documento)
+  - [ ] Write-off policy and provisioning rules per BCRA standards
+- [ ] `[M]` Build user-facing credit dashboard
+  - [ ] Current balance, available credit, next payment due
+  - [ ] Transaction history: fuel purchases, repayments
+  - [ ] Credit score indicator (simplified: Excelente/Bueno/Regular)
+  - [ ] Repayment calendar with upcoming dates
+- [ ] `[S]` Design fuel credit marketing materials
+  - [ ] In-app banner for eligible transportistas
+  - [ ] WhatsApp notification: "Tenés crédito disponible para combustible"
+  - [ ] Onboarding flow explaining terms clearly
+
+### Factoring Product
+
+> Transportista completes a load. Cargador owes payment in 30-60 days. CarGA buys the invoice at 3-5% discount, pays transportista immediately, collects full amount from cargador. Revenue: the spread.
+
+- [ ] `[L]` Define factoring product specification
+  - [ ] Discount rate calculation: base rate + risk premium based on cargador payment history
+  - [ ] Eligible invoices: loads with status 'entregada', confirmed by both parties
+  - [ ] Maximum invoice age for factoring: 7 days from delivery
+  - [ ] Minimum/maximum factoring amounts (floor: ARS 50,000, ceiling: ARS 5,000,000)
+  - [ ] Recourse vs. non-recourse: start with full recourse (transportista liable if cargador defaults)
+- [ ] `[L]` Build invoice verification system
+  - [ ] Automated verification: load exists, status confirmed, both parties signed off
+  - [ ] Digital signature/confirmation from cargador acknowledging payment obligation
+  - [ ] Cross-reference with cargador's payment history and credit score
+  - [ ] Fraud detection: flag unusual patterns (same route/amount/parties, rapid submissions)
+- [ ] `[XL]` Build cargador creditworthiness assessment
+  - [ ] Scoring model: avg_days_to_pay, default_rate, total_volume, platform_tenure, CUIT status, Veraz/Nosis check
+  - [ ] Risk tiers: Premium (auto-approve factoring), Standard (manual review), High-risk (decline)
+  - [ ] Dynamic credit limits per cargador based on outstanding factored invoices
+  - [ ] Concentration risk limits: max exposure per single cargador
+- [ ] `[M]` Build discount rate engine
+  - [ ] Base rate: 3% (low risk) to 5% (standard risk)
+  - [ ] Adjustments: +0.5% per 10 days expected payment delay, -0.5% for Premium tier
+  - [ ] Volume discounts: reduce rate by 0.25% for cargadores with 10+ factored loads/month
+  - [ ] Real-time rate calculation and display to transportista before acceptance
+- [ ] `[L]` Build collections infrastructure for factored invoices
+  - [ ] Automated payment reminders to cargador: 7 days, 3 days, due date, overdue
+  - [ ] Escalation workflow: reminder → formal notice → carta documento → legal action
+  - [ ] Integration with collections agency for 90+ day defaults
+  - [ ] Partial payment handling and reconciliation
+- [ ] `[M]` Build ARS/USD hedging for factoring float
+  - [ ] Daily mark-to-market of outstanding factored receivables in ARS
+  - [ ] Automated ROFEX future purchases to hedge USD-denominated working capital
+  - [ ] Currency exposure reporting for investors and BCRA
+- [ ] `[M]` Build legal documentation generation per transaction
+  - [ ] Automated cesión de crédito document with digital signatures
+  - [ ] Notification to cargador of assignment (required by Argentine Civil Code art. 1620)
+  - [ ] Transaction record storage (10 years per BCRA and UIF requirements)
+- [ ] `[M]` Build accounting integration for factoring
+  - [ ] Journal entries: invoice purchase, discount income recognition, payment receipt
+  - [ ] Monthly P&L for factoring business unit
+  - [ ] Provisioning for expected credit losses (IFRS 9 / BCRA Comunicación A 5693)
+- [ ] `[M]` Build transportista-facing factoring flow
+  - [ ] "Cobrar ahora" button on completed loads
+  - [ ] Instant quote: show discount rate, net amount, and expected payment date
+  - [ ] One-click acceptance with digital signature
+  - [ ] Payment confirmation and receipt generation
+- [ ] `[S]` Build cargador-facing factoring notification
+  - [ ] Notify cargador when their invoice has been factored
+  - [ ] Update payment instructions (pay to CarGA fintech entity, not transportista)
+  - [ ] Payment portal for cargador to pay factored invoices
+
+### Fintech Infrastructure
+
+- [ ] `[L]` Build separate payment rails for fintech operations
+  - [ ] Dedicated Mercado Pago merchant account for fintech entity
+  - [ ] CBU/CVU account setup for direct bank transfers
+  - [ ] Integration with DEBIN (Débito Inmediato) for automated collections
+  - [ ] Reconciliation engine: match incoming payments to outstanding obligations
+- [ ] `[L]` Build float management dashboard (admin)
+  - [ ] Real-time view: total working capital, deployed (fuel credit + factoring), available
+  - [ ] Daily cash flow forecast: expected repayments vs. expected disbursements
+  - [ ] Utilization trending: weekly, monthly, quarterly views
+  - [ ] Alert system: low float, concentration risk, currency exposure
+- [ ] `[L]` Build risk monitoring system
+  - [ ] Portfolio overview: total exposure by product, by user, by geography
+  - [ ] Delinquency tracking: 30/60/90 day buckets
+  - [ ] Watch list: users with deteriorating scores or payment patterns
+  - [ ] Stress testing: model portfolio performance under adverse scenarios (e.g., 20% default rate)
+- [ ] `[M]` Build regulatory reporting system
+  - [ ] Monthly BCRA reports: outstanding credit, delinquency rates, capital adequacy
+  - [ ] UIF suspicious activity reports (ROS) generation workflow
+  - [ ] Annual external audit data package preparation
+  - [ ] Ad-hoc regulatory query response capability
+- [ ] `[M]` Build comprehensive audit trail for financial transactions
+  - [ ] Immutable event log: every credit decision, disbursement, payment, adjustment
+  - [ ] User action tracking: who approved, when, with what data
+  - [ ] Data export for external auditors (CSV, PDF reports)
+- [ ] `[L]` Build fraud detection system
+  - [ ] Velocity checks: multiple applications from same device/IP/CUIT
+  - [ ] Collusion detection: related parties creating fake loads for credit extraction
+  - [ ] Amount anomaly detection: invoices significantly above route averages
+  - [ ] Real-time blocking with manual review queue
+- [ ] `[M]` Build enhanced KYC/AML for financial products
+  - [ ] Identity verification beyond CUIT: DNI photo match, proof of address
+  - [ ] PEP (Politically Exposed Person) screening against UIF database
+  - [ ] Sanctions list screening (ONU, OFAC)
+  - [ ] Ongoing monitoring: re-verify KYC annually
+
+### Working Capital Raise (Year 2)
+
+- [ ] `[M]` Build investor deck for fintech round
+  - [ ] Marketplace traction metrics: loads/month, GMV, user growth
+  - [ ] Credit scoring model performance: prediction accuracy, default rates from pilot
+  - [ ] Unit economics: revenue per credit cycle, cost of capital, net interest margin
+  - [ ] Competitive analysis: Frete.com FretePago, BlackBuck Finserve precedents
+  - [ ] Use of funds breakdown: working capital float, development, legal, reserves
+- [ ] `[L]` Build financial model for credit/factoring business
+  - [ ] Revenue projections: load volume × factoring penetration × discount rate
+  - [ ] Credit loss projections based on scoring model and historical data
+  - [ ] Working capital requirements by month (ramp-up curve)
+  - [ ] Break-even analysis for fintech unit
+  - [ ] Sensitivity analysis: default rate, interest rate, ARS/USD scenarios
+- [ ] `[M]` Prepare due diligence data room
+  - [ ] Marketplace financial statements (Year 1)
+  - [ ] BCRA authorization documentation
+  - [ ] Fintech entity corporate documents
+  - [ ] Credit scoring model documentation and backtesting results
+  - [ ] Sample loan/factoring agreements
+  - [ ] Technology architecture documentation for fintech systems
+- [ ] `[M]` BCRA approval documentation package for investors
+  - [ ] Current application status and expected timeline
+  - [ ] Compliance framework documentation
+  - [ ] Capital adequacy projections post-funding
+  - [ ] Regulatory risk assessment and mitigation plan
+- [ ] `[L]` Execute fintech working capital raise (target: USD 75,000-150,000)
+  - [ ] Identify fintech-focused investors in Argentina (Kaszek, Mundi, Copernico)
+  - [ ] Present at fintech-specific events (Finnosummit LATAM, Argentina Fintech Forum)
+  - [ ] Negotiate terms: convertible note vs. priced equity vs. revenue-based financing
+  - [ ] Close round and deploy capital to float management accounts
+
+---
+
 ## 🔧 Infrastructure & DevOps (Ongoing)
 
 - [ ] `[M]` Set up staging environment (separate Supabase + Vercel project)
@@ -321,4 +568,4 @@
 
 ---
 
-*Last updated: 2025-03-24*
+*Last updated: 2025-03-26*

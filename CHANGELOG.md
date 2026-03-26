@@ -16,7 +16,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-*Working on Week 9: Admin dashboard.*
+*Working on Week 14: Pre-launch checklist and production deployment.*
+
+---
+
+## [0.6.0] — Admin Dashboard + Full QA — 2025-03-26
+
+> Complete admin backoffice. Security hardened with rate limiting. Comprehensive test coverage: 121 unit + 125 E2E tests.
+
+### Added
+- Admin dashboard overview: 6 stat cards (users, loads, subscriptions, signups)
+- Admin user management: searchable table, role filter, suspend/activate/change role
+- Admin load management: status filter, cancel/restore moderation
+- Admin reports: subscription overview, CUIT verification queue, ratings moderation, CSV export
+- Admin API: 5 endpoints (stats, users, loads, logs, export)
+- Admin components: StatCard, AdminTable (responsive mobile cards), ActionDropdown
+- All admin actions logged to admin_logs audit table
+- 121 unit tests across 5 suites: format, validations, cuit, plans, constants
+- 25 new E2E tests: admin pages, profile pages, load pages (total: 125)
+- Loading states: root loading, load board skeleton, map loading
+- Skeleton component: card, text, avatar, table-row variants
+
+### Security
+- RateLimiter class with configurable limits + auto-cleanup
+- API rate limiting: 60 requests/min per IP on /api/* routes
+- Auth rate limiting: 5 POST attempts per 15 min on login/register
+- Rate limit headers: X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset
+- Input sanitization utilities: sanitizeHtml, sanitizeSearchQuery, sanitizeUserInput
 
 ---
 

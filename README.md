@@ -7,12 +7,12 @@
 <p align="center">Argentina's first digital load board — connecting truck operators with freight shippers in real time.</p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.2.0-blue" alt="Version">
+  <img src="https://img.shields.io/badge/version-0.6.0-blue" alt="Version">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
   <img src="https://img.shields.io/badge/Next.js-14-black" alt="Next.js 14">
   <img src="https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E" alt="Supabase">
-  <img src="https://img.shields.io/badge/TypeScript-strict-3178C6" alt="TypeScript strict">
-  <img src="https://img.shields.io/badge/status-foundation--complete-blue" alt="Status">
+  <img src="https://img.shields.io/badge/tests-246%20passing-brightgreen" alt="246 tests passing">
+  <img src="https://img.shields.io/badge/status-MVP--ready-brightgreen" alt="Status">
 </p>
 
 ---
@@ -405,4 +405,4 @@ CarGA is built under a co-founder model: Codexium contributes full MVP developme
 
 ---
 
-*This README reflects the project as of v0.2.0 (foundation complete — Next.js 14 + Supabase scaffold with all tables, auth, UI components, and CI/CD). Last updated: 2025-03-25.*
+*This README reflects the project as of v0.6.0 (MVP feature-complete — load board, maps, WhatsApp, payments, ratings, CUIT verification, admin dashboard, 246 tests passing). Last updated: 2025-03-26.*

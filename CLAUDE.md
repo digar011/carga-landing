@@ -8,25 +8,29 @@ CarGA is Argentina's first digital load board — a two-sided marketplace connec
 **Company:** Built by Codexium (codexium.ai) under a co-founder model. Pre-money valuation: USD 200,000.
 
 ## Current State
-Phase 1 Week 1-2 Foundation complete. Next.js 14 app scaffold is built and compiles cleanly.
-- `public/landing/index.html` — Pre-launch landing page
-- `public/landing/prototype.html` — 8-screen interactive prototype for investor demos
-- Full Next.js 14 app with App Router, TypeScript strict, Tailwind CSS
-- 10 Supabase migration files with all tables + RLS policies
-- Dual-role auth system (transportista/cargador/admin) with middleware
-- 9 shared UI components, 3 layout components (Header, Sidebar, BottomNav)
-- Lib wrappers for all integrations (Supabase, WhatsApp, MercadoPago, AFIP, Google Maps, Resend, Sentry, PostHog)
-- CI/CD pipeline (GitHub Actions)
+Phase 1 Weeks 1-13 complete. MVP feature-complete, pending Week 14 production launch.
+- **40 routes**: 25 pages + 17 API endpoints (loads, applications, ratings, subscriptions, admin, webhooks, verify-cuit)
+- **10 Supabase tables** with RLS policies, triggers, and enums
+- **246 tests**: 121 unit (Vitest) + 125 E2E (Playwright) — all passing
+- **Security**: rate limiting, input sanitization, CSP headers, secret exposure checks
+- Full load board marketplace: post, browse, filter, apply, accept/reject, status lifecycle
+- Google Maps interactive load map + WhatsApp Business API notifications
+- Mercado Pago subscriptions (6 plans) + AFIP CUIT verification + mutual ratings
+- Admin dashboard with user/load management, reports, CSV export
 
 ## Tech Stack — Active
 | Layer | Technology |
 |-------|-----------|
 | Frontend | Next.js 14 (App Router), TypeScript strict, Tailwind CSS |
 | Database | Supabase (PostgreSQL + Realtime + Auth) — 10 tables with RLS |
-| Package Manager | pnpm 9 |
-| Testing | Vitest (unit) + Playwright (E2E) |
-| Linting | ESLint (next/core-web-vitals) |
-| CI/CD | GitHub Actions |
+| Maps | Google Maps JS API (dynamic loading) |
+| Notifications | WhatsApp Business API + in-app fallback |
+| Payments | Mercado Pago (Checkout Pro + subscriptions) |
+| Identity | AFIP CUIT validation |
+| Email | Resend |
+| Security | Rate limiting (in-memory), input sanitization, CSP headers |
+| Testing | Vitest (121 unit) + Playwright (125 E2E) — 246 total |
+| CI/CD | GitHub Actions (lint, typecheck, test, build) |
 
 ## Tech Stack — MVP Target
 | Layer | Technology |

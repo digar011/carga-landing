@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { TUserRole } from '@/types/database';
+import { GoogleAuthButton } from '@/components/shared/google-auth-button';
 
 export default function RegisterPage() {
   return (
@@ -134,6 +135,21 @@ function RegisterForm() {
           Completá tus datos para crear tu cuenta
         </p>
       </div>
+
+      {/* Google OAuth — only for transportista */}
+      {role === 'transportista' && (
+        <>
+          <GoogleAuthButton mode="register" role="transportista" />
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-3 text-gray-400">o con email</span>
+            </div>
+          </div>
+        </>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

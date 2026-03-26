@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { GoogleAuthButton } from '@/components/shared/google-auth-button';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -43,6 +44,18 @@ export default function LoginPage() {
       <p className="mb-6 text-sm text-gray-500">
         Ingresá a tu cuenta para continuar
       </p>
+
+      {/* Google OAuth — transportista login */}
+      <GoogleAuthButton mode="login" role="transportista" />
+
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-200" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white px-3 text-gray-400">o con email</span>
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

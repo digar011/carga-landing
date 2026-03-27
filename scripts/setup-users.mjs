@@ -113,7 +113,7 @@ const USERS = [
     : []),
   {
     email: 'testuser@carga.com.ar',
-    password: 'CarGA-Test-2025!',
+    password: 'Testpassword123!',
     role: 'transportista',
     profile: {
       table: 'profiles_transportista',
@@ -137,7 +137,7 @@ const USERS = [
   },
   {
     email: 'testcargador@carga.com.ar',
-    password: 'CarGA-Cargador-2025!',
+    password: 'Testpassword123!',
     role: 'cargador',
     profile: {
       table: 'profiles_cargador',
@@ -159,7 +159,7 @@ const USERS = [
   },
   {
     email: 'testadmin@carga.com.ar',
-    password: 'CarGA-Admin-2025!',
+    password: 'Testpassword123!',
     role: 'admin',
     profile: null,
     description: 'Test admin user',
@@ -285,19 +285,12 @@ async function main() {
   console.log('\n');
   console.log('✅ Setup complete!');
   console.log('');
-  console.log('Test credentials:');
+  console.log('Test credentials (all use password: Testpassword123!):');
   console.log('─────────────────────────────────────────────────');
-  console.log('Test Transportista:');
-  console.log('  Email:    testuser@carga.com.ar');
-  console.log('  Password: CarGA-Test-2025!');
-  console.log('');
-  console.log('Test Cargador:');
-  console.log('  Email:    testcargador@carga.com.ar');
-  console.log('  Password: CarGA-Cargador-2025!');
-  console.log('');
-  console.log('Test Admin:');
-  console.log('  Email:    testadmin@carga.com.ar');
-  console.log('  Password: CarGA-Admin-2025!');
+  console.log('  Transportista:  testuser@carga.com.ar');
+  console.log('  Cargador:       testcargador@carga.com.ar');
+  console.log('  Admin:          testadmin@carga.com.ar');
+  console.log('  Password:       Testpassword123!');
   console.log('─────────────────────────────────────────────────');
   console.log('');
 }

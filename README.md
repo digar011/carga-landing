@@ -243,10 +243,11 @@ make setup-users
 
 | Role | Email | Password |
 |------|-------|----------|
-| **Transportista** (test user) | `testuser@carga.com.ar` | `CarGA-Test-2025!` |
-| **Admin** (test admin) | `testadmin@carga.com.ar` | `CarGA-Admin-2025!` |
+| **Transportista** | `testuser@carga.com.ar` | `CarGA-Test-2025!` |
+| **Cargador** | `testcargador@carga.com.ar` | `CarGA-Cargador-2025!` |
+| **Admin** | `testadmin@carga.com.ar` | `CarGA-Admin-2025!` |
 
-> **Note:** The primary admin account (`diego.j.garnica@gmail.com`) is also created by the setup script but credentials are not listed here for security. See `scripts/setup-users.mjs` for details.
+> **Note:** The primary admin account (`diego.j.garnica@gmail.com`) is also created by the setup script with full access to all roles (admin + transportista + cargador) via a role switcher toggle. Credentials are not listed here for security — see `scripts/setup-users.mjs`.
 
 ### What's Running Now
 

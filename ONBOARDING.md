@@ -198,9 +198,10 @@ pnpm dev
 | Role | Email | Password |
 |------|-------|----------|
 | **Transportista** | `testuser@carga.com.ar` | `CarGA-Test-2025!` |
+| **Cargador** | `testcargador@carga.com.ar` | `CarGA-Cargador-2025!` |
 | **Admin** | `testadmin@carga.com.ar` | `CarGA-Admin-2025!` |
 
-The primary admin account (`diego.j.garnica@gmail.com`) is also provisioned by the setup script. Credentials are in `scripts/setup-users.mjs` (gitignored from public docs for security).
+The primary admin account (`diego.j.garnica@gmail.com`) has full access to all 3 roles via a toggle in the header (admin, transportista, cargador). Credentials are in `scripts/setup-users.mjs`.
 
 Open [http://localhost:3000](http://localhost:3000).
 

@@ -132,6 +132,28 @@ const USERS = [
     description: 'Test transportista user',
   },
   {
+    email: 'testcargador@carga.com.ar',
+    password: 'CarGA-Cargador-2025!',
+    role: 'cargador',
+    profile: {
+      table: 'profiles_cargador',
+      data: {
+        empresa: 'Transportes del Sur SRL',
+        cuit: '30-72000000-3',
+        contacto_nombre: 'María López',
+        contacto_telefono: '+5491198765432',
+        contacto_email: 'testcargador@carga.com.ar',
+        provincia: 'Córdoba',
+        ciudad: 'Córdoba Capital',
+        rating: 4.5,
+        total_cargas: 12,
+        verified: true,
+        plan: 'estandar',
+      },
+    },
+    description: 'Test cargador user',
+  },
+  {
     email: 'testadmin@carga.com.ar',
     password: 'CarGA-Admin-2025!',
     role: 'admin',
@@ -261,9 +283,13 @@ async function main() {
   console.log('');
   console.log('Test credentials:');
   console.log('─────────────────────────────────────────────────');
-  console.log('Test User (Transportista):');
+  console.log('Test Transportista:');
   console.log('  Email:    testuser@carga.com.ar');
   console.log('  Password: CarGA-Test-2025!');
+  console.log('');
+  console.log('Test Cargador:');
+  console.log('  Email:    testcargador@carga.com.ar');
+  console.log('  Password: CarGA-Cargador-2025!');
   console.log('');
   console.log('Test Admin:');
   console.log('  Email:    testadmin@carga.com.ar');

@@ -20,9 +20,9 @@ test.describe('CarGA — Páginas de Administración', () => {
   });
 
   test('página de reportes carga con título correcto', async ({ page }) => {
-    await page.goto('/a-reportes');
-    const heading = page.locator('h1');
-    await expect(heading).toContainText('Reportes', { timeout: 10000 });
+    await page.goto('/a-reportes', { waitUntil: 'networkidle' });
+    await expect(page.locator('h1')).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('h1')).toContainText('Reportes');
   });
 
   test('panel tiene navegación lateral (sidebar)', async ({ page }) => {

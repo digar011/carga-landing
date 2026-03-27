@@ -195,13 +195,11 @@ pnpm dev
 
 ### Test Accounts
 
-All test accounts use the same password: **`Testpassword123!`**
-
-| Role | Email |
-|------|-------|
-| **Transportista** | `testuser@carga.com.ar` |
-| **Cargador** | `testcargador@carga.com.ar` |
-| **Admin** | `testadmin@carga.com.ar` |
+| Role | Email | Password |
+|------|-------|----------|
+| **Transportista** | `testuser@carga.com.ar` | `Testpassword123!` |
+| **Cargador** | `testcargador@carga.com.ar` | `Testpassword123!` |
+| **Admin** | `testadmin@carga.com.ar` | `Testpassword123!` |
 
 A primary super-admin account is also created with full access to all 3 roles via a toggle in the header. Configure `SUPER_ADMIN_EMAIL` and `SUPER_ADMIN_PASSWORD` in `.env.local` before running the setup script.
 

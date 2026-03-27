@@ -241,13 +241,11 @@ make setup-users
 
 ### Test Accounts
 
-All test accounts use the same password: **`Testpassword123!`**
-
-| Role | Email |
-|------|-------|
-| **Transportista** | `testuser@carga.com.ar` |
-| **Cargador** | `testcargador@carga.com.ar` |
-| **Admin** | `testadmin@carga.com.ar` |
+| Role | Email | Password |
+|------|-------|----------|
+| **Transportista** | `testuser@carga.com.ar` | `Testpassword123!` |
+| **Cargador** | `testcargador@carga.com.ar` | `Testpassword123!` |
+| **Admin** | `testadmin@carga.com.ar` | `Testpassword123!` |
 
 > **Note:** A primary super-admin account is also created by the setup script with full access to all roles (admin + transportista + cargador) via a role switcher toggle. Configure `SUPER_ADMIN_EMAIL` and `SUPER_ADMIN_PASSWORD` in `.env.local` before running `make setup-users`.
 

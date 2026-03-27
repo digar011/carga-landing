@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { RoleSwitcher } from './role-switcher';
 
 interface THeaderProps {
   notificationCount?: number;
@@ -26,6 +27,8 @@ export function Header({
 
       {/* Right section */}
       <div className="flex items-center gap-3">
+        {/* Role switcher — only visible for super admins */}
+        <RoleSwitcher />
         {/* Notification bell */}
         <button
           type="button"

@@ -68,8 +68,44 @@ const USERS = [
     email: 'diego.j.garnica@gmail.com',
     password: 'Mynewpassword2025!',
     role: 'admin',
-    profile: null, // Admin doesn't need a marketplace profile
-    description: 'Primary admin (Diego — CEO, Codexium)',
+    // Diego gets ALL profiles — can toggle between admin/transportista/cargador
+    profiles: [
+      {
+        table: 'profiles_transportista',
+        data: {
+          nombre: 'Diego',
+          apellido: 'Garnica',
+          cuit: '20-35000000-1',
+          telefono: '+5491100000000',
+          whatsapp: '+5491100000000',
+          provincia: 'Buenos Aires',
+          ciudad: 'CABA',
+          rating: 5.0,
+          total_viajes: 0,
+          verified: true,
+          plan: 'flota',
+          habilitaciones: ['carga_general', 'cereales', 'refrigerados', 'peligrosos'],
+          whatsapp_notifications: true,
+        },
+      },
+      {
+        table: 'profiles_cargador',
+        data: {
+          empresa: 'Codexium S.A.',
+          cuit: '30-71000000-1',
+          contacto_nombre: 'Diego Garnica',
+          contacto_telefono: '+5491100000000',
+          contacto_email: 'diego.j.garnica@gmail.com',
+          provincia: 'Buenos Aires',
+          ciudad: 'CABA',
+          rating: 5.0,
+          total_cargas: 0,
+          verified: true,
+          plan: 'premium',
+        },
+      },
+    ],
+    description: 'Primary admin (Diego — CEO, Codexium) — full access to all roles',
   },
   {
     email: 'testuser@carga.com.ar',
@@ -209,7 +245,15 @@ async function main() {
     if (!user) continue;
 
     await ensureUserRole(user.id, userDef.role);
-    await createProfile(user.id, userDef.profile);
+
+    // Handle multiple profiles (e.g., Diego has both transportista + cargador)
+    if (userDef.profiles) {
+      for (const profileConfig of userDef.profiles) {
+        await createProfile(user.id, profileConfig);
+      }
+    } else if (userDef.profile) {
+      await createProfile(user.id, userDef.profile);
+    }
   }
 
   console.log('\n');

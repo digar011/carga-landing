@@ -11,8 +11,14 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import type { TUserRole } from '@/types/database';
 
-// Diego's email — the only user who can switch between all 3 roles
-const SUPER_ADMIN_EMAILS = ['diego.j.garnica@gmail.com'];
+// Super admin emails — loaded from env var, comma-separated
+// Configure NEXT_PUBLIC_SUPER_ADMIN_EMAILS in .env.local
+const SUPER_ADMIN_EMAILS = (
+  process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAILS ?? ''
+)
+  .split(',')
+  .map((e) => e.trim())
+  .filter(Boolean);
 
 type TViewMode = TUserRole;
 

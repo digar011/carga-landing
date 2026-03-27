@@ -64,49 +64,53 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
 // ============================================
 
 const USERS = [
-  {
-    email: 'diego.j.garnica@gmail.com',
-    password: 'Mynewpassword2025!',
-    role: 'admin',
-    // Diego gets ALL profiles — can toggle between admin/transportista/cargador
-    profiles: [
-      {
-        table: 'profiles_transportista',
-        data: {
-          nombre: 'Diego',
-          apellido: 'Garnica',
-          cuit: '20-35000000-1',
-          telefono: '+5491100000000',
-          whatsapp: '+5491100000000',
-          provincia: 'Buenos Aires',
-          ciudad: 'CABA',
-          rating: 5.0,
-          total_viajes: 0,
-          verified: true,
-          plan: 'flota',
-          habilitaciones: ['carga_general', 'cereales', 'refrigerados', 'peligrosos'],
-          whatsapp_notifications: true,
+  // Super admin — credentials from environment variables (never hardcoded)
+  ...(process.env.SUPER_ADMIN_EMAIL
+    ? [
+        {
+          email: process.env.SUPER_ADMIN_EMAIL,
+          password: process.env.SUPER_ADMIN_PASSWORD || 'ChangeMe-2025!',
+          role: 'admin',
+          profiles: [
+            {
+              table: 'profiles_transportista',
+              data: {
+                nombre: process.env.SUPER_ADMIN_NAME || 'Admin',
+                apellido: process.env.SUPER_ADMIN_LASTNAME || 'Principal',
+                cuit: '20-35000000-1',
+                telefono: '+5491100000000',
+                whatsapp: '+5491100000000',
+                provincia: 'Buenos Aires',
+                ciudad: 'CABA',
+                rating: 5.0,
+                total_viajes: 0,
+                verified: true,
+                plan: 'flota',
+                habilitaciones: ['carga_general', 'cereales', 'refrigerados', 'peligrosos'],
+                whatsapp_notifications: true,
+              },
+            },
+            {
+              table: 'profiles_cargador',
+              data: {
+                empresa: process.env.SUPER_ADMIN_EMPRESA || 'Admin S.A.',
+                cuit: '30-71000000-1',
+                contacto_nombre: process.env.SUPER_ADMIN_NAME || 'Admin',
+                contacto_telefono: '+5491100000000',
+                contacto_email: process.env.SUPER_ADMIN_EMAIL,
+                provincia: 'Buenos Aires',
+                ciudad: 'CABA',
+                rating: 5.0,
+                total_cargas: 0,
+                verified: true,
+                plan: 'premium',
+              },
+            },
+          ],
+          description: 'Primary super-admin — full access to all roles',
         },
-      },
-      {
-        table: 'profiles_cargador',
-        data: {
-          empresa: 'Codexium S.A.',
-          cuit: '30-71000000-1',
-          contacto_nombre: 'Diego Garnica',
-          contacto_telefono: '+5491100000000',
-          contacto_email: 'diego.j.garnica@gmail.com',
-          provincia: 'Buenos Aires',
-          ciudad: 'CABA',
-          rating: 5.0,
-          total_cargas: 0,
-          verified: true,
-          plan: 'premium',
-        },
-      },
-    ],
-    description: 'Primary admin (Diego — CEO, Codexium) — full access to all roles',
-  },
+      ]
+    : []),
   {
     email: 'testuser@carga.com.ar',
     password: 'CarGA-Test-2025!',

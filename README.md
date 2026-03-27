@@ -247,7 +247,7 @@ make setup-users
 | **Cargador** | `testcargador@carga.com.ar` | `CarGA-Cargador-2025!` |
 | **Admin** | `testadmin@carga.com.ar` | `CarGA-Admin-2025!` |
 
-> **Note:** The primary admin account (`diego.j.garnica@gmail.com`) is also created by the setup script with full access to all roles (admin + transportista + cargador) via a role switcher toggle. Credentials are not listed here for security — see `scripts/setup-users.mjs`.
+> **Note:** A primary super-admin account is also created by the setup script with full access to all roles (admin + transportista + cargador) via a role switcher toggle. Configure `SUPER_ADMIN_EMAIL` and `SUPER_ADMIN_PASSWORD` in `.env.local` before running `make setup-users`.
 
 ### What's Running Now
 

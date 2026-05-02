@@ -200,35 +200,55 @@
   - [x] Server components by default — client components only where needed
   - [x] All list endpoints support pagination (limit/offset)
 
-### ⏳ Issues Fixed (Week 14 Pre-Launch)
+### ⏳ Issues Fixed (Week 14 Pre-Launch) — 2026-05-01 to 2026-05-02
 
-- [x] `[M]` **WhatsApp Integration:** Wire notifyMatchingTransportistas into POST /api/loads — 2026-05-01
-  - [x] Import WhatsApp matching function
-  - [x] Add fire-and-forget call after load creation
-  - [x] Error handling and logging
-- [x] `[M]` **Rate Limiting:** Replace in-memory with Redis-backed distributed limiter — 2026-05-01
-  - [x] Enhance RateLimiter class to support Redis backend
-  - [x] Fail-open on Redis unavailability
-  - [x] Update WhatsApp matching to use new RateLimiter
-- [x] `[M]` **Meta Template Documentation:** Create WhatsApp approval guide — 2026-05-01
-  - [x] Document all 5 templates with exact Meta specifications
-  - [x] Submission workflow and timeline
-  - [x] Troubleshooting guide
+**All 3 critical pre-launch issues resolved:**
+
+- [x] `[M]` **WhatsApp Integration:** Wire notifyMatchingTransportistas into POST /api/loads — COMPLETED 2026-05-01
+  - [x] Import WhatsApp matching function into app/api/loads/route.ts
+  - [x] Add fire-and-forget call after load creation succeeds
+  - [x] Proper error handling and console logging (sent/skipped notifications)
+  - [x] Non-blocking pattern (notifications won't delay load response)
+  
+- [x] `[M]` **Rate Limiting:** Replace in-memory with Redis-backed distributed limiter — COMPLETED 2026-05-01
+  - [x] Enhanced RateLimiter class to support Redis backend (lib/security/rate-limiter.ts)
+  - [x] Implemented fail-open pattern (allows requests if Redis unavailable)
+  - [x] Updated WhatsApp matching to use RateLimiter class instead of Map
+  - [x] Automatic environment detection (Redis for production, in-memory for dev)
+  - [x] Zero external package dependencies
+  
+- [x] `[M]` **Meta Template Documentation:** Create WhatsApp approval guide — COMPLETED 2026-05-01
+  - [x] Document all 5 templates with exact Meta specifications (docs/WHATSAPP_TEMPLATES.md)
+  - [x] Complete submission workflow (step-by-step Meta Business Manager process)
+  - [x] Production deployment checklist and troubleshooting guide
+  - [x] Environment configuration examples
+  
+- [x] `[S]` **GitHub Issue:** Create tracking issue for Meta template submission — COMPLETED 2026-05-02
+  - [x] GitHub Issue #1 created: "Meta WhatsApp Templates: Submit for Approval"
+  - [x] Comprehensive submission checklist (5 templates)
+  - [x] Success criteria and blockers documented
+  - [x] Ready for team to execute submission workflow
 
 ---
 
-### ⏳ Remaining Issues (Pre-Launch Blockers)
+### ⏳ Remaining Blockers (Pre-Launch)
 
-- [~] `[M]` Pre-launch checklist
+### ⏳ Remaining Blockers (Pre-Launch)
+
+- [~] `[M]` Pre-launch checklist — IN PROGRESS
   - [x] All tests passing in CI (246/246: 121 unit + 125 E2E passing)
-  - [ ] Staging environment smoke tested
-  - [~] WhatsApp message templates approved by Meta (submission guide created, awaiting approval)
+  - [x] WhatsApp integration complete and documented (GitHub Issue #1 tracks submission)
+  - [ ] **🔴 BLOCKER:** Meta WhatsApp templates submitted for approval (see GitHub Issue #1)
+    - [ ] All 5 templates created in Meta Business Manager
+    - [ ] All templates approved (24-48 hour timeline)
+    - [ ] Production credentials configured (.env.production)
+  - [ ] Staging environment smoke tested (pending template approval)
   - [ ] Mercado Pago production credentials configured
   - [ ] Sentry + PostHog confirmed working in production
   - [ ] DNS + domain configured
   - [ ] SSL certificate active
   - [ ] Privacy policy + terms of service pages published
-  - [ ] CHANGELOG updated for v1.0.0
+  - [ ] CHANGELOG.md updated for v1.0.0 release notes
 - [ ] `[M]` Production deployment
   - [ ] Deploy to Vercel production
   - [ ] Run Supabase migrations on production
@@ -584,17 +604,37 @@
 
 ---
 
-*Last updated: 2026-05-01*
+*Last updated: 2026-05-02*
 
 ---
 
 ## 📋 Status Summary
 
-**Phase 1 MVP:** 95% complete
+**Phase 1 MVP:** 96% complete
 - ✅ Weeks 1-13: All core features, integrations, and testing complete (246/246 tests passing)
-- 🟡 Week 14: Pre-launch checklist in progress (5/9 items complete)
-  - ⏳ **Blockers:** Staging environment, WhatsApp template approval, Mercado Pago prod credentials, DNS/SSL setup, legal documents
-- ⏭️ **Next:** Complete Week 14 checklist, deploy to staging, smoke testing, production launch
+- ✅ Week 14 Critical Fixes (2026-05-01 to 2026-05-02):
+  - ✅ WhatsApp integration wired into load posting (notifications now triggered on load creation)
+  - ✅ Redis-backed distributed rate limiting implemented (production-ready for multi-instance)
+  - ✅ Meta template documentation and approval guide created
+  - ✅ GitHub Issue #1 created to track Meta submission workflow
+  - ✅ All changes committed and pushed to main branch
+- 🟡 Week 14: Pre-launch checklist — awaiting critical approval
+  - ⏳ **BLOCKING TASK:** GitHub Issue #1 — Meta WhatsApp template approval (24-48 hour timeline)
+  - ⏳ **Next:** Mercado Pago prod credentials, DNS/SSL setup, legal documents, staging testing
+- ⏭️ **Action Items:** 
+  1. Execute GitHub Issue #1 checklist (submit 5 templates to Meta)
+  2. Monitor approval status (24-48 hours)
+  3. Once approved: deploy to staging, run smoke tests
+  4. Production launch (same day after staging verification)
+
+**GitHub Tracking:**
+- Issue #1: [Meta WhatsApp Templates: Submit for Approval](https://github.com/digar011/carga-landing/issues/1)
+  - All templates documented with exact Meta specifications
+  - Complete submission workflow documented
+  - Ready for immediate execution
+
+**Commits This Week:**
+- `aa2ed46` (2026-05-01): feat(whatsapp): integrate notifications into load posting and add Redis rate limiting
 
 **Post-Launch Priorities (Months 2-3):**
 1. Usability testing with real truckers + UX refinements

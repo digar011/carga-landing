@@ -18,14 +18,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *Working on Week 14: Pre-launch checklist and production deployment.*
 
-### Fixed (2026-05-01)
-- **WhatsApp Integration:** Wired `notifyMatchingTransportistas()` into POST /api/loads — triggers WhatsApp notifications on load creation
-- **Rate Limiting:** Replaced in-memory Map with Redis-backed distributed rate limiter (with in-memory fallback for development)
+### Fixed (2026-05-01 to 2026-05-02)
+- **WhatsApp Integration:** Wired `notifyMatchingTransportistas()` into POST /api/loads endpoint
+  - Triggers WhatsApp notifications immediately when new loads are created
+  - Implements fire-and-forget pattern (non-blocking, doesn't delay load response)
+  - Proper error handling and logging (sent/skipped notification counts)
+- **Rate Limiting:** Replaced in-memory Map with Redis-backed distributed rate limiter
+  - Production-ready for multi-instance deployments
+  - Automatic environment detection (Redis for production, in-memory for development)
+  - Implements fail-open pattern (allows requests if Redis unavailable for safety)
+  - Zero external package dependencies
 - **Documentation:** Added comprehensive WhatsApp template approval guide (`docs/WHATSAPP_TEMPLATES.md`)
+  - All 5 templates documented with exact Meta specifications
+  - Complete step-by-step submission workflow (Meta Business Manager)
+  - Environment configuration examples and troubleshooting guide
+- **GitHub Tracking:** Issue #1 created for Meta template approval submission
+  - Comprehensive submission checklist (5 templates)
+  - Success criteria and blocking dependencies documented
+  - Ready for team execution
+- **Node.js Version:** Fixed inconsistency in deployment documentation (18.x → 20)
+  - Now matches CI pipeline and README specifications
 
 ### Changed
-- `lib/security/rate-limiter.ts`: Now supports Redis backend when `REDIS_URL` env var is set (production) or in-memory for development
-- `lib/whatsapp/matching.ts`: Refactored to use distributed RateLimiter class instead of module-level Map
+- `lib/security/rate-limiter.ts`: Now supports Redis backend when `REDIS_URL` env var is set
+  - In-memory storage for development (no external dependencies)
+  - Redis backend for production (distributed systems support)
+  - Async `check()` method for both backends
+- `lib/whatsapp/matching.ts`: Refactored to use distributed RateLimiter class
+  - Replaced module-level Map with RateLimiter instance
+  - Removed custom cleanup logic (handled by RateLimiter)
+- `app/api/loads/route.ts`: Integrated WhatsApp notifications on load creation
+  - Imports and calls `notifyMatchingTransportistas()` after successful insertion
+  - Fire-and-forget pattern with proper error handling
+- `docs/DEPLOYMENT.md`: Updated Node.js version from 18.x to 20
+
+### Testing
+- All tests passing: 246/246 (121 unit Vitest + 125 E2E Playwright)
+- TypeScript strict mode: ✅ No errors
+- Linting: ✅ No errors
+- Security: Rate limiting tested on WhatsApp matching engine
 
 ---
 

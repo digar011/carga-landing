@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { geocodeLoadCities } from '@/lib/google-maps/geocode-load';
+import { notifyMatchingTransportistas } from '@/lib/whatsapp/matching';
 import { loadSchema } from '@/utils/validations';
 import { getLoads, type TLoadFilters } from '@/lib/supabase/queries';
 import type { TTruckType, TCargoType } from '@/types/database';
@@ -113,11 +115,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const geocodedLoad = await geocodeLoadCities(
+      parsed.data.origen_ciudad,
+      parsed.data.origen_provincia,
+      parsed.data.destino_ciudad,
+      parsed.data.destino_provincia,
+    );
+
     const { data: load, error: insertError } = await supabase
       .from('loads')
       .insert({
         cargador_id: profile.id,
         ...parsed.data,
+        ...geocodedLoad,
         estado: 'publicada' as const,
       })
       .select()
@@ -129,6 +139,15 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Trigger WhatsApp notifications to matching transportistas (fire-and-forget)
+    notifyMatchingTransportistas(load)
+      .then((result) => {
+        console.info(`[WhatsApp Notifications] Load ${load.id}: sent=${result.sent}, skipped=${result.skipped}`);
+      })
+      .catch((error) => {
+        console.error(`[WhatsApp Notifications] Error notifying transportistas for load ${load.id}:`, error);
+      });
 
     return NextResponse.json({ success: true, data: load }, { status: 201 });
   } catch (err: unknown) {

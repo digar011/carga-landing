@@ -18,6 +18,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *Working on Week 14: Pre-launch checklist and production deployment.*
 
+### Fixed (2026-05-01)
+- **WhatsApp Integration:** Wired `notifyMatchingTransportistas()` into POST /api/loads — triggers WhatsApp notifications on load creation
+- **Rate Limiting:** Replaced in-memory Map with Redis-backed distributed rate limiter (with in-memory fallback for development)
+- **Documentation:** Added comprehensive WhatsApp template approval guide (`docs/WHATSAPP_TEMPLATES.md`)
+
+### Changed
+- `lib/security/rate-limiter.ts`: Now supports Redis backend when `REDIS_URL` env var is set (production) or in-memory for development
+- `lib/whatsapp/matching.ts`: Refactored to use distributed RateLimiter class instead of module-level Map
+
 ---
 
 ## [0.6.0] — Admin Dashboard + Full QA — 2025-03-26

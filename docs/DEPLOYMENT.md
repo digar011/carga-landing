@@ -18,7 +18,7 @@
 
 ## Prerequisites
 
-- Node.js 18+ and pnpm installed
+- Node.js 20+ and pnpm installed
 - Supabase CLI installed (`npm install -g supabase`)
 - Vercel CLI installed (`npm install -g vercel`)
 - GitHub repository access
@@ -86,7 +86,7 @@ In the Vercel project dashboard:
 - **Build Command:** `pnpm build` (auto-detected)
 - **Output Directory:** `.next` (auto-detected)
 - **Install Command:** `pnpm install`
-- **Node.js Version:** 18.x
+- **Node.js Version:** 20
 - **Function Region:** `gru1` (Sao Paulo) — closest to Argentine users
 
 ### 3. Set environment variables

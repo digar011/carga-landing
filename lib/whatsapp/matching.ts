@@ -1,6 +1,7 @@
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { sendWhatsAppTemplate } from '@/lib/whatsapp/client';
 import { buildNewLoadMessage } from '@/lib/whatsapp/templates';
+import { RateLimiter } from '@/lib/security/rate-limiter';
 import type { TLoad, TPlan } from '@/types/database';
 
 // ============================================
@@ -15,8 +16,8 @@ const WHATSAPP_ELIGIBLE_PLANS: TPlan[] = ['profesional', 'flota'];
 /** Rate limit: máximo 1 WhatsApp por usuario por hora para cargas nuevas */
 const RATE_LIMIT_MS = 60 * 60 * 1000; // 1 hora
 
-/** In-memory tracker para rate limiting (se resetea con cada deploy) */
-const recentlyNotified = new Map<string, number>();
+/** Redis-backed rate limiter (or in-memory fallback) */
+const rateLimiter = new RateLimiter(1, RATE_LIMIT_MS);
 
 interface TMatchingTransportista {
   whatsapp: string;
@@ -106,12 +107,8 @@ export async function notifyMatchingTransportistas(
   }
 
   const supabase = createServiceRoleClient();
-  const now = Date.now();
   let sent = 0;
   let skipped = 0;
-
-  // Clean up expired rate limit entries
-  cleanupRateLimits(now);
 
   const origen = `${load.origen_ciudad}, ${load.origen_provincia}`;
   const destino = `${load.destino_ciudad}, ${load.destino_provincia}`;
@@ -120,9 +117,9 @@ export async function notifyMatchingTransportistas(
   const templateMessage = buildNewLoadMessage(origen, destino, tarifaFormatted);
 
   for (const transportista of transportistas) {
-    // Check rate limit
-    const lastNotified = recentlyNotified.get(transportista.user_id);
-    if (lastNotified && now - lastNotified < RATE_LIMIT_MS) {
+    // Check rate limit using Redis-backed limiter
+    const limitResult = await rateLimiter.check(transportista.user_id);
+    if (!limitResult.allowed) {
       skipped++;
       continue;
     }
@@ -136,7 +133,6 @@ export async function notifyMatchingTransportistas(
     });
 
     if (success) {
-      recentlyNotified.set(transportista.user_id, now);
       sent++;
     } else {
       skipped++;
@@ -172,21 +168,6 @@ export async function notifyMatchingTransportistas(
   );
 
   return { sent, skipped };
-}
-
-/**
- * Limpia entradas expiradas del rate limit tracker
- */
-function cleanupRateLimits(now: number): void {
-  const entries = Array.from(recentlyNotified.entries());
-  for (let i = 0; i < entries.length; i++) {
-    const entry = entries[i];
-    if (!entry) continue;
-    const [userId, timestamp] = entry;
-    if (now - timestamp >= RATE_LIMIT_MS) {
-      recentlyNotified.delete(userId);
-    }
-  }
 }
 
 /**
